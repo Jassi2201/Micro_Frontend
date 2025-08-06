@@ -3,6 +3,7 @@ import api from '../../services/api'
 import { useAuth } from '../../services/auth'
 import ConfidencePopup from '../../components/ConfidencePopup'
 import DocumentPopup from '../../components/DocumentPopup'
+import AudioButton from '../../components/AudioButton'
 
 const Assignments = () => {
   const { user } = useAuth()
@@ -22,7 +23,6 @@ const Assignments = () => {
   const [showDocumentPopup, setShowDocumentPopup] = useState(false)
   const [currentDocumentPath, setCurrentDocumentPath] = useState('')
 
-  // Flatten all questions into a single array for navigation
   const allQuestions = questionsByCategory.reduce((acc, category) => {
     return [...acc, ...category.questions]
   }, [])
@@ -31,7 +31,6 @@ const Assignments = () => {
     const fetchAssignments = async () => {
       try {
         const data = await api.getUserAssignmentCompletionDetails(user.id)
-        // Separate completed and not completed assignments
         const completed = []
         const notCompleted = []
         
@@ -64,7 +63,6 @@ const Assignments = () => {
       const data = await api.getAssignmentQuestions(user.id, assignmentId)
       const assignment = [...assignments, ...completedAssignments].find(a => a.id === assignmentId)
       
-      // Process the new response format with categories
       const parsedCategories = data.questions.map(category => ({
         ...category,
         questions: category.questions.map(question => {
@@ -79,7 +77,7 @@ const Assignments = () => {
             console.error('Failed to parse options for question:', question.id, e)
             return {
               ...question,
-              options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'] // fallback
+              options: ['Option 1', 'Option 2', 'Option 3', 'Option 4']
             }
           }
         })
@@ -106,7 +104,6 @@ const Assignments = () => {
       const data = await api.getAssignmentResults(user.id, assignmentId)
       const assignment = completedAssignments.find(a => a.id === assignmentId)
       
-      // Safely parse options for each response
       const parsedResults = {
         ...data.assignment,
         responses: data.assignment.responses.map(response => {
@@ -121,7 +118,7 @@ const Assignments = () => {
             console.error('Failed to parse options for response:', response.questionId, e)
             return {
               ...response,
-              options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'] // fallback
+              options: ['Option 1', 'Option 2', 'Option 3', 'Option 4']
             }
           }
         })
@@ -146,10 +143,7 @@ const Assignments = () => {
       [questionId]: answerIndex
     }))
     
-    // Set the current answer text for the popup
     setCurrentAnswerText(selectedOption)
-    
-    // Show the confidence popup
     setShowConfidencePopup(true)
   }
 
@@ -183,22 +177,19 @@ const Assignments = () => {
       setLoading(true)
       setError('')
       
-      // Prepare responses for submission - use the actual option text instead of index
       const responses = Object.entries(userAnswers).map(([questionId, answerIndex]) => {
         const question = allQuestions.find(q => q.id === parseInt(questionId))
         const selectedOption = question.options[answerIndex]
         
         return {
           questionId: parseInt(questionId),
-          answer: selectedOption,  // Send the actual option text
+          answer: selectedOption,
           isSure: userConfidence[questionId] || false
         }
       })
       
-      // Submit all responses at once
       const submissionResponse = await api.submitAssignment(user.id, selectedAssignment.id, responses)
       
-      // Update the results state with the response data
       setResults({
         ...submissionResponse,
         responses: submissionResponse.results.map(result => ({
@@ -220,7 +211,6 @@ const Assignments = () => {
       
       setSubmitted(true)
       
-      // Update assignments list
       const updatedAssignments = assignments.filter(a => a.id !== selectedAssignment.id)
       setAssignments(updatedAssignments)
       setCompletedAssignments(prev => [...prev, {...selectedAssignment, isCompleted: true}])
@@ -237,7 +227,6 @@ const Assignments = () => {
     setResults(null)
   }
 
-  // Helper function to determine file type
   const getFileType = (filePath) => {
     if (!filePath) return null;
     const extension = filePath.split('.').pop().toLowerCase();
@@ -330,7 +319,6 @@ const Assignments = () => {
               
               <div className="space-y-6">
                 {results.responses.map((response, index) => {
-                  // Determine status display properties
                   const statusDisplay = {
                     'sure_correct': {
                       text: 'Sure & Correct',
@@ -384,7 +372,6 @@ const Assignments = () => {
                     icon: null
                   };
 
-                  // Determine feedback message based on status
                   let statusMessage = '';
                   
                   switch(response.status) {
@@ -415,7 +402,6 @@ const Assignments = () => {
                         <p className="text-sm text-gray-600">Correct answer: <span className="font-medium">{response.correctAnswer}</span></p>
                       </div>
                       
-                      {/* Feedback container with status display */}
                       <div className={`p-4 rounded-lg ${statusDisplay.bg} ${statusDisplay.border}`}>
                         <div className="flex items-center mb-3">
                           <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${statusDisplay.color.replace('text-', 'bg-')} bg-opacity-20`}>
@@ -429,22 +415,27 @@ const Assignments = () => {
                         </div>
                         
                         <div className="pl-11">
-                          {/* Status message */}
                           {statusMessage && (
                             <p className="text-sm mb-4 whitespace-pre-line">{statusMessage}</p>
                           )}
                           
-                          {/* Quick summary */}
                           {response.feedback.short && (
                             <div className="mb-4">
                               <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h6 className="text-sm font-semibold mb-1">Quick Summary</h6>
+                                <div className="flex justify-between items-center">
+                                  <h6 className="text-sm font-semibold mb-1">Quick Summary</h6>
+                                  <AudioButton texts={[
+                                    `Question ${index + 1}: ${response.question}`,
+                                    `Your answer: ${response.userAnswer}`,
+                                    `Correct answer: ${response.correctAnswer}`,
+                                    `Feedback: ${response.feedback.short}`
+                                  ]} />
+                                </div>
                                 <p className="text-sm whitespace-pre-line">{response.feedback.short}</p>
                               </div>
                             </div>
                           )}
                           
-                          {/* Detailed explanation */}
                           {response.feedback.long.text && (
                             <div className="mb-4">
                               <h6 className="text-sm font-semibold mb-1">Detailed Explanation</h6>
@@ -452,23 +443,21 @@ const Assignments = () => {
                             </div>
                           )}
                           
-                          {/* Resources */}
-
-{response.feedback.long.filePath && (
-  <div className="mt-4 flex items-center space-x-4">
-    <a 
-      href={`${'http://localhost:3000'}${response.feedback.long.filePath}`}
-      target="_blank" 
-      rel="noopener noreferrer"
-      className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
-    >
-      <svg className="-ml-0.5 mr-1.5 h-3 w-3 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-      </svg>
-      Download Additional Resources
-    </a>
-  </div>
-)}
+                          {response.feedback.long.filePath && (
+                            <div className="mt-4 flex items-center space-x-4">
+                              <a 
+                                href={`${'http://localhost:3000'}${response.feedback.long.filePath}`}
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
+                              >
+                                <svg className="-ml-0.5 mr-1.5 h-3 w-3 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                                Download Additional Resources
+                              </a>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -493,7 +482,6 @@ const Assignments = () => {
 
           {allQuestions.length > 0 && (
             <div>
-              {/* Display current category */}
               {questionsByCategory.map(category => {
                 if (category.questions.some(q => q.id === allQuestions[currentQuestionIndex].id)) {
                   return (
@@ -508,7 +496,6 @@ const Assignments = () => {
               })}
               
               <div className="mb-6">
-                {/* Display question media (image or video) if available */}
                 {allQuestions[currentQuestionIndex].question_media_path && (
                   <div className="mb-4">
                     {getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'image' ? (
@@ -535,23 +522,28 @@ const Assignments = () => {
                   </div>
                 )}
                 
-                <div className="flex justify-between items-start">
-                  <h3 className="text-lg font-head mb-4 flex-1">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-lg font-head flex-1">
                     {allQuestions[currentQuestionIndex].question}
                   </h3>
-                {allQuestions[currentQuestionIndex].long_content_file_path && (
-  <button
-    onClick={() => handleViewDocument(allQuestions[currentQuestionIndex].long_content_file_path)}
-    className="ml-2 flex items-center px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-full border border-blue-200"
-    title="View document"
-  >
-    <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
-      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-    </svg>
-    <span className="text-sm">View Document</span>
-  </button>
-)}
+                  <AudioButton texts={[
+                    allQuestions[currentQuestionIndex].question,
+                    `Options are: ${allQuestions[currentQuestionIndex].options.join(', ')}`
+                  ]} />
                 </div>
+                
+                {allQuestions[currentQuestionIndex].long_content_file_path && (
+                  <button
+                    onClick={() => handleViewDocument(allQuestions[currentQuestionIndex].long_content_file_path)}
+                    className="mb-4 flex items-center px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-full border border-blue-200"
+                    title="View document"
+                  >
+                    <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                    </svg>
+                    <span className="text-sm">View Document</span>
+                  </button>
+                )}
                 
                 <div className="space-y-3 mb-6">
                   {allQuestions[currentQuestionIndex].options.map((option, index) => (
@@ -624,7 +616,6 @@ const Assignments = () => {
         </div>
       )}
 
-      {/* Document Popup */}
       <DocumentPopup
         isOpen={showDocumentPopup}
         onClose={() => setShowDocumentPopup(false)}
