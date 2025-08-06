@@ -1,0 +1,64 @@
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes neon-rotate {
+  from {
+    --angle: 0deg;
+  }
+  to {
+    --angle: 360deg;
+  }
+}
+
+.status-card {
+  position: relative;
+  border: 5px solid transparent;
+  border-radius: 8px;
+  overflow: hidden;
+  isolation: isolate;
+  transition: all 0.3s ease;
+}
+
+.status-card::before {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: inherit;
+  border-radius: inherit;
+  background: conic-gradient(
+      from var(--angle),
+      var(--neon-clr) 40%,
+      transparent,
+      var(--neon-clr) 60%
+    )
+    border-box;
+  mask: conic-gradient(yellow 0 0) subtract,
+    conic-gradient(yellow 0 0) padding-box;
+  opacity: 0.75;
+  z-index: 1;
+  animation: neon-rotate 8s linear infinite;
+}
+
+.status-card::after {
+  content: "";
+  position: absolute;
+  inset: -20px;
+  z-index: -2;
+  background: conic-gradient(
+    from var(--angle),
+    var(--neon-clr),
+    transparent,
+    var(--neon-clr)
+  );
+  border-radius: 15px;
+  filter: blur(12px);
+  opacity: 0.5;
+  animation: neon-rotate 8s linear infinite;
+}
+.status-card::before,
+.status-card::after {
+  pointer-events: none;
+}

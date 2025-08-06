@@ -4,13 +4,13 @@ const DocumentPopup = ({ isOpen, onClose, documentPath }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4" style={{background : '#00000091'}}>
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+    <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center z-50 p-4" style={{background : '#000000c2'}}>
+      <div className="  rounded-lg border-opacity-20 border-white  max-w-4xl w-full max-h-[90vh] flex flex-col p-1 border border-opacity-20  shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10">
         <div className="flex justify-between items-center border-b p-4">
           <h3 className="text-lg font-semibold">Document Viewer</h3>
           <button 
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-white "
             aria-label="Close document viewer"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

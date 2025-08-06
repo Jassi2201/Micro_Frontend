@@ -15,8 +15,8 @@ const ConfidencePopup = ({
   };
 
   return (
-    <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50 p-4" style={{background : '#00000091'}}>
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
+    <div className="fixed inset-0  bg-opacity-50 flex items-center justify-center z-50 p-4" style={{background : '#000000c2'}}>
+      <div className="p-6 rounded-lg border border-opacity-20 border-white w-full max-w-md mx-4   border-opacity-20  shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10">
         <h3 className="text-xl font-semibold mb-4">Confirmation</h3>
         <p className="mb-4">You selected: <strong>{currentAnswer}</strong></p>
         <p className="mb-6">How confident are you in your answer?</p>

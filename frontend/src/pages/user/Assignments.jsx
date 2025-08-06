@@ -3,6 +3,9 @@ import api from '../../services/api'
 import { useAuth } from '../../services/auth'
 import ConfidencePopup from '../../components/ConfidencePopup'
 import DocumentPopup from '../../components/DocumentPopup'
+import {FaCheck,FaTimes} from 'react-icons/fa'
+import "./Assignment.css"
+import { FiDownload, FiAlertCircle } from 'react-icons/fi';
 
 const Assignments = () => {
   const { user } = useAuth()
@@ -252,8 +255,8 @@ const Assignments = () => {
   if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-head mb-6">My Assessments</h1>
+  <div className="container mx-auto px-4 pb-8 -mt-4">  {/* Negative margin pulls content up */}
+  <h1 className="text-2xl font-head mb-4">My Assessments</h1>  {/* Reduce heading margin */}
       
       {error && <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">{error}</div>}
 
@@ -265,9 +268,9 @@ const Assignments = () => {
           ) : (
             <div className="grid gap-6 font-head md:grid-cols-2 lg:grid-cols-3 mb-8">
               {assignments.map((assignment) => (
-                <div key={assignment.id} className="bg-white rounded-lg shadow p-6">
+                <div key={assignment.id} className="rounded-xl border border-opacity-20 border-white p-6 shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10">
                   <h3 className="text-lg font-semibold mb-2">{assignment.name}</h3>
-                  <p className="text-gray-600 mb-4">Created: {new Date(assignment.createdAt).toLocaleDateString()}</p>
+                  <p className="text-white mb-4">Created: {new Date(assignment.createdAt).toLocaleDateString()}</p>
                   <button 
                     onClick={() => startAssignment(assignment.id)}
                     className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -285,9 +288,9 @@ const Assignments = () => {
           ) : (
             <div className="grid font-body gap-6 md:grid-cols-2 lg:grid-cols-3">
               {completedAssignments.map((assignment) => (
-                <div key={assignment.id} className="bg-white rounded-lg shadow p-6">
+                <div key={assignment.id} className="rounded-xl border border-opacity-20 border-white p-6 shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10">
                   <h3 className="text-lg font-semibold mb-2">{assignment.name}</h3>
-                  <p className="text-gray-600 mb-2">Completed: {new Date(assignment.completedAt).toLocaleDateString()}</p>
+                  <p className="text-white mb-2">Completed: {new Date(assignment.completedAt).toLocaleDateString()}</p>
                   <div className="mb-4">
                     <p className="text-sm">Mastery: {assignment.stats.masteryPercentage}%</p>
                     <p className="text-sm">{assignment.stats.masteredQuestions}/{assignment.stats.totalQuestions} questions mastered</p>
@@ -304,12 +307,12 @@ const Assignments = () => {
           )}
         </div>
       ) : submitted ? (
-        <div className="bg-white font-body rounded-lg shadow p-6">
+        <div className=" font-body rounded-lg shadow p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-bold">{selectedAssignment.name} - Results</h2>
             <button
               onClick={handleBackToAssignments}
-              className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+              className=" border border-opacity-20 border-white text-white px-4 py-2 rounded shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10"
             >
               Back to Assessments
             </button>
@@ -317,7 +320,7 @@ const Assignments = () => {
           
           {results ? (
             <div>
-              <div className="mb-6 p-4 bg-gray-50 rounded">
+              <div className="mb-6 p-4  rounded">
                 <h3 className="text-lg font-semibold mb-2">Summary</h3>
                 <p>Completed on: {new Date(results.completedAt).toLocaleString()}</p>
                 <p>Total Questions: {results.responses.length}</p>
@@ -329,151 +332,147 @@ const Assignments = () => {
               </div>
               
               <div className="space-y-6">
-                {results.responses.map((response, index) => {
-                  // Determine status display properties
-                  const statusDisplay = {
-                    'sure_correct': {
-                      text: 'Sure & Correct',
-                      color: 'text-green-800',
-                      bg: 'bg-green-100',
-                      border: 'border-green-200',
-                      icon: (
-                        <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      )
-                    },
-                    'not_sure_correct': {
-                      text: 'Not Sure & Correct',
-                      color: 'text-blue-800',
-                      bg: 'bg-blue-100',
-                      border: 'border-blue-200',
-                      icon: (
-                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                        </svg>
-                      )
-                    },
-                    'not_sure_incorrect': {
-                      text: 'Not Sure & Incorrect',
-                      color: 'text-yellow-800',
-                      bg: 'bg-yellow-100',
-                      border: 'border-yellow-200',
-                      icon: (
-                        <svg className="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
-                      )
-                    },
-                    'sure_incorrect': {
-                      text: 'Sure & Incorrect',
-                      color: 'text-red-800',
-                      bg: 'bg-red-100',
-                      border: 'border-red-200',
-                      icon: (
-                        <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
-                      )
-                    }
-                  }[response.status] || {
-                    text: response.status.replace(/_/g, ' '),
-                    color: 'text-gray-800',
-                    bg: 'bg-gray-100',
-                    border: 'border-gray-200',
-                    icon: null
-                  };
+              {results.responses.map((response, index) => {
+  // Determine status display properties
+  const statusDisplay = {
+    'sure_correct': {
+      text: 'Sure & Correct',
+      color: 'text-green-800',
+      bg: 'bg-green-100',
+      border: 'border-green-200',
+      icon: (
+        <FaCheck className="w-4 h-4 text-white"/>
+      )
+    },
+    'not_sure_correct': {
+      text: 'Not Sure & Correct',
+      color: 'text-blue-800',
+      bg: 'bg-blue-100',
+      border: 'border-blue-200',
+       icon: <FaCheck className="w-4 h-4 text-white" />
+    },
+    'not_sure_incorrect': {
+      text: 'Not Sure & Incorrect',
+      color: 'text-yellow-800',
+      bg: 'bg-yellow-100',
+      border: 'border-yellow-200',
+     
+     icon: <FaTimes className="w-4 h-4 text-white" />
+    },
+    'sure_incorrect': {
+      text: 'Sure & Incorrect',
+      color: 'text-red-800',
+      bg: 'bg-red-100',
+      border: 'border-red-200',
+       icon: <FaTimes className="w-4 h-4 text-white" />
+    }
+  }[response.status] || {
+    text: response.status.replace(/_/g, ' '),
+    color: 'text-gray-800',
+    bg: 'bg-gray-100',
+    border: 'border-gray-200',
+    icon: null
+  };
 
-                  // Determine feedback message based on status
-                  let statusMessage = '';
-                  
-                  switch(response.status) {
-                    case 'sure_correct':
-                      statusMessage = 'The answer is correct!\n\nGreat job — you\'ve mastered this question like a pro!';
-                      break;
-                    case 'not_sure_correct':
-                      statusMessage = 'Correct answer — but not sure.\n\nCheck the quick summary below to refresh your understanding!';
-                      break;
-                    case 'not_sure_incorrect':
-                      statusMessage = 'Incorrect answer — and unsure about it.\n\nGo through the attached document to strengthen your understanding!';
-                      break;
-                    case 'sure_incorrect':
-                      statusMessage = 'Incorrect answer — but you seemed confident.\n\nCheck the attached document to clear up the concept!';
-                      break;
-                    default:
-                      statusMessage = '';
-                  }
+  // Determine feedback message based on status
+  let statusMessage = '';
+  
+  switch(response.status) {
+    case 'sure_correct':
+      statusMessage = 'The answer is correct!\n\nGreat job — you\'ve mastered this question like a pro!';
+      break;
+    case 'not_sure_correct':
+      statusMessage = 'Correct answer — but not sure.\n\nCheck the quick summary below to refresh your understanding!';
+      break;
+    case 'not_sure_incorrect':
+      statusMessage = 'Incorrect answer — and unsure about it.\n\nGo through the attached document to strengthen your understanding!';
+      break;
+    case 'sure_incorrect':
+      statusMessage = 'Incorrect answer — but you seemed confident.\n\nCheck the attached document to clear up the concept!';
+      break;
+    default:
+      statusMessage = '';
+  }
 
-                  return (
-                    <div key={index} className="p-4 rounded border border-gray-200">
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium">Question {index + 1}: {response.question}</h4>
-                      </div>
-                      
-                      <div className="mb-4">
-                        <p className="text-sm text-gray-600">Your answer: <span className="font-medium">{response.userAnswer}</span></p>
-                        <p className="text-sm text-gray-600">Correct answer: <span className="font-medium">{response.correctAnswer}</span></p>
-                      </div>
-                      
-                      {/* Feedback container with status display */}
-                      <div className={`p-4 rounded-lg ${statusDisplay.bg} ${statusDisplay.border}`}>
-                        <div className="flex items-center mb-3">
-                          <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${statusDisplay.color.replace('text-', 'bg-')} bg-opacity-20`}>
-                            {statusDisplay.icon}
-                          </div>
-                          <div className="ml-3">
-                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusDisplay.color} ${statusDisplay.bg}`}>
-                              {statusDisplay.text}
-                            </span>
-                          </div>
-                        </div>
-                        
-                        <div className="pl-11">
-                          {/* Status message */}
-                          {statusMessage && (
-                            <p className="text-sm mb-4 whitespace-pre-line">{statusMessage}</p>
-                          )}
-                          
-                          {/* Quick summary */}
-                          {response.feedback.short && (
-                            <div className="mb-4">
-                              <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <h6 className="text-sm font-semibold mb-1">Quick Summary</h6>
-                                <p className="text-sm whitespace-pre-line">{response.feedback.short}</p>
-                              </div>
-                            </div>
-                          )}
-                          
-                          {/* Detailed explanation */}
-                          {response.feedback.long.text && (
-                            <div className="mb-4">
-                              <h6 className="text-sm font-semibold mb-1">Detailed Explanation</h6>
-                              <p className="text-sm">{response.feedback.long.text}</p>
-                            </div>
-                          )}
-                          
-                          {/* Resources */}
-
-{response.feedback.long.filePath && (
-  <div className="mt-4 flex items-center space-x-4">
-    <a 
-      href={`${'http://localhost:3000'}${response.feedback.long.filePath}`}
-      target="_blank" 
-      rel="noopener noreferrer"
-      className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
-    >
-      <svg className="-ml-0.5 mr-1.5 h-3 w-3 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
-      </svg>
-      Download Additional Resources
-    </a>
+  return (
+<div 
+  key={index} 
+  className={`status-card p-6 rounded-lg mb-6 
+    backdrop-blur-sm bg-opacity-20 shadow-lg
+    border border-opacity-30
+    transition-all duration-300
+    hover:bg-opacity-30 hover:shadow-md`}
+  style={{
+    '--neon-clr': statusDisplay.color === 'text-green-800' ? '#10b981' :
+                 statusDisplay.color === 'text-blue-800' ? '#3b82f6' :
+                 statusDisplay.color === 'text-yellow-800' ? '#f59e0b' :
+                 statusDisplay.color === 'text-red-800' ? '#ef4444' : '#6b7280',
+    backgroundColor: statusDisplay.color === 'text-green-800' ? 'rgba(16, 185, 129, 0.1)' :
+                    statusDisplay.color === 'text-blue-800' ? 'rgba(59, 130, 246, 0.1)' :
+                    statusDisplay.color === 'text-yellow-800' ? 'rgba(245, 158, 11, 0.1)' :
+                    statusDisplay.color === 'text-red-800' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(107, 114, 128, 0.1)',
+    borderColor: statusDisplay.color === 'text-green-800' ? 'rgba(16, 185, 129, 0.3)' :
+                statusDisplay.color === 'text-blue-800' ? 'rgba(59, 130, 246, 0.3)' :
+                statusDisplay.color === 'text-yellow-800' ? 'rgba(245, 158, 11, 0.3)' :
+                statusDisplay.color === 'text-red-800' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(107, 114, 128, 0.3)'
+  }}
+>
+      <div className="flex items-center mb-4">
+        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${statusDisplay.color.replace('text-', 'bg-')} bg-opacity-20`}>
+          {statusDisplay.icon}
+        </div>
+        <div className="ml-3">
+          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold text-white`}>
+            {statusDisplay.text}
+          </span>
+        </div>
+      </div>
+      
+      <div className="pl-11 text-white">
+        <h4 className="font-medium text-lg mb-2">Question {index + 1}: {response.question}</h4>
+        
+        <div className="mb-4">
+          <p className="text-sm">Your answer: <span className="font-medium">{response.userAnswer}</span></p>
+          <p className="text-sm">Correct answer: <span className="font-medium">{response.correctAnswer}</span></p>
+        </div>
+        
+        {/* Status message */}
+        {statusMessage && (
+          <p className="text-sm mb-4 whitespace-pre-line">{statusMessage}</p>
+        )}
+        
+ 
+{response.feedback?.short && (
+  <div className="mb-4 bg-white/60 backdrop-blur-md p-4 rounded-lg border border-white/20 shadow-sm">
+    <h6 className="text-sm font-semibold mb-1 text-black">Quick Summary</h6>
+    <p className="text-sm whitespace-pre-line text-black">{response.feedback.short}</p>
   </div>
 )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+        
+        {/* Detailed explanation */}
+   {response.feedback?.long?.text && (
+  <div className="mb-4">
+    <h6 className="text-sm font-semibold mb-1">Detailed Explanation</h6>
+    <p className="text-sm">{response.feedback.long.text}</p>
+  </div>
+)}
+        
+        {/* Resources */}
+       {response.feedback.long.filePath && (
+  <div className="mt-4">
+    <button
+      onClick={() => window.open(`${'http://localhost:3000'}${response.feedback.long.filePath}`, '_blank')}
+      className="flex items-center px-4 py-2 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 transition-all duration-300 text-white"
+    >
+      <FiDownload className="mr-2" />
+      <span>Additional Resources</span>
+    </button>
+  </div>
+)}
+      </div>
+    </div>
+  );
+})}
               </div>
             </div>
           ) : (
@@ -483,10 +482,10 @@ const Assignments = () => {
           )}
         </div>
       ) : (
-        <div className="bg-white font-head rounded-lg shadow p-6">
+        <div className=" font-head rounded-lg shadow p-6">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">{selectedAssignment.name}</h2>
-            <div>
+            <h2 className="text-2xl font-head">{selectedAssignment.name}</h2>
+            <div className='font-head text-xl'>
               Question {currentQuestionIndex + 1} of {allQuestions.length}
             </div>
           </div>
@@ -498,7 +497,7 @@ const Assignments = () => {
                 if (category.questions.some(q => q.id === allQuestions[currentQuestionIndex].id)) {
                   return (
                     <div key={category.category_id} className="mb-2">
-                      <span className="text-sm font-bold text-blue-600">
+                      <span className="text-xl font-head text-[#3b82f6]">
                         Category: {category.category_name}
                       </span>
                     </div>
@@ -536,18 +535,16 @@ const Assignments = () => {
                 )}
                 
                 <div className="flex justify-between items-start">
-                  <h3 className="text-lg font-head mb-4 flex-1">
+                  <h3 className="text-2xl font-head mb-4 flex-1">
                     {allQuestions[currentQuestionIndex].question}
                   </h3>
-                {allQuestions[currentQuestionIndex].long_content_file_path && (
+{allQuestions[currentQuestionIndex].long_content_file_path && (
   <button
     onClick={() => handleViewDocument(allQuestions[currentQuestionIndex].long_content_file_path)}
-    className="ml-2 flex items-center px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-full border border-blue-200"
+    className="ml-2 flex items-center px-3 py-1 text-white/80 hover:text-white rounded-full border border-white/20 hover:border-white/40 transition-all duration-300"
     title="View document"
   >
-    <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
-      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-    </svg>
+    <FiAlertCircle className="w-4 h-4 mr-1 text-[#3b82f6]" />
     <span className="text-sm">View Document</span>
   </button>
 )}
@@ -559,8 +556,8 @@ const Assignments = () => {
                       key={index} 
                       className={`p-3 border font-body rounded cursor-pointer ${
                         userAnswers[allQuestions[currentQuestionIndex].id] === index 
-                          ? 'bg-blue-100 border-blue-500' 
-                          : 'hover:bg-gray-50'
+                          ? 'bg-[#3b82f6] border-white' 
+                          : 'hover:bg-[#3b82f6]'
                       }`}
                       onClick={() => handleAnswerSelect(allQuestions[currentQuestionIndex].id, index)}
                     >
@@ -586,8 +583,8 @@ const Assignments = () => {
                   disabled={currentQuestionIndex === 0}
                   className={`px-4 py-2 rounded ${
                     currentQuestionIndex === 0 
-                      ? 'bg-gray-300 cursor-not-allowed' 
-                      : 'bg-gray-600 text-white hover:bg-gray-700'
+                      ? '  border border-opacity-20 border-white cursor-not-allowed' 
+                      : 'bg-[#3b82f6] text-white '
                   }`}
                 >
                   Previous
@@ -599,8 +596,8 @@ const Assignments = () => {
                     disabled={userAnswers[allQuestions[currentQuestionIndex].id] === undefined}
                     className={`px-4 py-2 rounded ${
                       userAnswers[allQuestions[currentQuestionIndex].id] === undefined
-                        ? 'bg-gray-300 cursor-not-allowed'
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
+                        ? 'p-4  border border-opacity-20 border-white cursor-not-allowed'
+                        : 'bg-[#3b82f6] text-white '
                     }`}
                   >
                     Next
@@ -611,7 +608,7 @@ const Assignments = () => {
                     disabled={Object.keys(userAnswers).length !== allQuestions.length}
                     className={`px-4 py-2 rounded ${
                       Object.keys(userAnswers).length !== allQuestions.length
-                        ? 'bg-gray-300 cursor-not-allowed'
+                        ? 'p-4  border border-opacity-20 border-whitecursor-not-allowed'
                         : 'bg-green-600 text-white hover:bg-green-700'
                     }`}
                   >
