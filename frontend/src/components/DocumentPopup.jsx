@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { FILE_BASE_URL } from '../services/api'; // Import the base URL from api.js
 
 const DocumentPopup = ({ isOpen, onClose, documentPath }) => {
   if (!isOpen) return null;
@@ -21,7 +22,7 @@ const DocumentPopup = ({ isOpen, onClose, documentPath }) => {
         <div className="flex-1 overflow-auto p-4">
           {documentPath ? (
             <iframe 
-              src={`${'http://localhost:3000'}${documentPath}`}
+               src={`${FILE_BASE_URL}${documentPath}`}
               className="w-full h-full min-h-[70vh] border-0"
               title="Document Viewer"
             />

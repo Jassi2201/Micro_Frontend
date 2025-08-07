@@ -4,6 +4,7 @@ import { useAuth } from '../../services/auth'
 import ConfidencePopup from '../../components/ConfidencePopup'
 import DocumentPopup from '../../components/DocumentPopup'
 import AudioButton from '../../components/AudioButton'
+import { FILE_BASE_URL } from '../../services/api'; // Import the base URL from api.js
 
 const Assignments = () => {
   const { user } = useAuth()
@@ -446,7 +447,7 @@ const Assignments = () => {
                           {response.feedback.long.filePath && (
                             <div className="mt-4 flex items-center space-x-4">
                               <a 
-                                href={`${'http://localhost:3000'}${response.feedback.long.filePath}`}
+                                href={`${FILE_BASE_URL}${response.feedback.long.filePath}`}
                                 target="_blank" 
                                 rel="noopener noreferrer"
                                 className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
@@ -500,7 +501,7 @@ const Assignments = () => {
                   <div className="mb-4">
                     {getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'image' ? (
                       <img 
-                        src={`${'http://localhost:3000'}${allQuestions[currentQuestionIndex].question_media_path}`}
+                        src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
                         alt="Question media"
                         className="w-full h-64 object-contain mx-auto"
                       />
@@ -513,7 +514,7 @@ const Assignments = () => {
                         className="w-full h-64 object-contain mx-auto"
                       >
                         <source 
-                          src={`${'http://localhost:3000'}${allQuestions[currentQuestionIndex].question_media_path}`}
+                          src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
                           type={`video/${allQuestions[currentQuestionIndex].question_media_path.split('.').pop()}`}
                         />
                         Your browser does not support the video tag.
