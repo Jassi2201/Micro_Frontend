@@ -420,29 +420,19 @@ const Assignments = () => {
                             <p className="text-sm mb-4 whitespace-pre-line">{statusMessage}</p>
                           )}
                           
-                          {response.feedback.short && (
-                            <div className="mb-4">
-                              <div className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
-                                <div className="flex justify-between items-center">
-                                  <h6 className="text-sm font-semibold mb-1">Quick Summary</h6>
-                                  <AudioButton texts={[
-                                    `Question ${index + 1}: ${response.question}`,
-                                    `Your answer: ${response.userAnswer}`,
-                                    `Correct answer: ${response.correctAnswer}`,
-                                    `Feedback: ${response.feedback.short}`
-                                  ]} />
-                                </div>
-                                <p className="text-sm whitespace-pre-line">{response.feedback.short}</p>
-                              </div>
-                            </div>
-                          )}
+                          {response.feedback?.short && (
+  <div className="mb-4 bg-white/60 backdrop-blur-md p-4 rounded-lg border border-white/20 shadow-sm">
+    <h6 className="text-sm font-semibold mb-1 text-black">Quick Summary</h6>
+    <p className="text-sm whitespace-pre-line text-black">{response.feedback.short}</p>
+  </div>
+)}
                           
-                          {response.feedback.long.text && (
-                            <div className="mb-4">
-                              <h6 className="text-sm font-semibold mb-1">Detailed Explanation</h6>
-                              <p className="text-sm">{response.feedback.long.text}</p>
-                            </div>
-                          )}
+                      {response.feedback?.long?.text && (
+  <div className="mb-4">
+    <h6 className="text-sm font-semibold mb-1">Detailed Explanation</h6>
+    <p className="text-sm">{response.feedback.long.text}</p>
+  </div>
+)}
                           
                           {response.feedback.long.filePath && (
                             <div className="mt-4 flex items-center space-x-4">
