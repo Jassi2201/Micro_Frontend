@@ -59,19 +59,41 @@ const AudioButton = ({ texts }) => {
 
       const utterance = new SpeechSynthesisUtterance(cleanedTexts[currentIndex]);
       
-      // Configure utterance
-      utterance.rate = 0.9; // Slightly slower
-      utterance.pitch = 1;
+      // Configure utterance for deeper male voice
+      utterance.rate = 0.85; // Slightly slower for deeper effect
+      utterance.pitch = 0.8; // Lower pitch for deeper voice
       utterance.volume = 1;
 
-      // Select a voice (prefer natural sounding voices)
-      const preferredVoice = voices.find(v => 
+      // Select the best male voice available
+      const maleVoices = voices.filter(v => 
         v.lang.includes('en') && 
-        (v.name.includes('Natural') || v.name.includes('David') || v.name.includes('Zira'))
+        (v.name.toLowerCase().includes('male') || 
+         v.name.includes('David') || 
+         v.name.includes('Google UK English Male') ||
+         v.name.includes('Microsoft David Desktop') ||
+         v.name.includes('Alex') ||
+         v.name.includes('Daniel'))
       );
-      
-      if (preferredVoice) {
-        utterance.voice = preferredVoice;
+
+      // Sort by quality (prefer voices that explicitly mention male or have known male names)
+      maleVoices.sort((a, b) => {
+        const aScore = a.name.toLowerCase().includes('male') ? 2 : 
+                      (a.name.includes('David') || a.name.includes('Alex') || a.name.includes('Daniel')) ? 1 : 0;
+        const bScore = b.name.toLowerCase().includes('male') ? 2 : 
+                      (b.name.includes('David') || b.name.includes('Alex') || b.name.includes('Daniel')) ? 1 : 0;
+        return bScore - aScore;
+      });
+
+      if (maleVoices.length > 0) {
+        utterance.voice = maleVoices[0];
+        console.log('Using voice:', maleVoices[0].name);
+      } else if (voices.length > 0) {
+        // Fallback to any English voice if no male voices found
+        const englishVoice = voices.find(v => v.lang.includes('en'));
+        if (englishVoice) {
+          utterance.voice = englishVoice;
+          console.log('Fallback to English voice:', englishVoice.name);
+        }
       }
 
       utterance.onboundary = (event) => {
@@ -91,7 +113,8 @@ const AudioButton = ({ texts }) => {
         // Fallback - try speaking without voice selection
         if (event.error === 'synthesis-failed') {
           const fallbackUtterance = new SpeechSynthesisUtterance(cleanedTexts[currentIndex]);
-          fallbackUtterance.rate = 0.9;
+          fallbackUtterance.rate = 0.85;
+          fallbackUtterance.pitch = 0.8;
           window.speechSynthesis.speak(fallbackUtterance);
         }
       };
