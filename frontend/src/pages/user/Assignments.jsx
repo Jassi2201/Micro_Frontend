@@ -6,6 +6,7 @@ import DocumentPopup from '../../components/DocumentPopup'
 import {FaCheck,FaTimes} from 'react-icons/fa'
 import "./Assignment.css"
 import { FiDownload, FiAlertCircle } from 'react-icons/fi';
+import AudioButton from '../../components/AudioButton'
 
 const Assignments = () => {
   const { user } = useAuth()
@@ -534,21 +535,30 @@ const Assignments = () => {
                   </div>
                 )}
                 
-                <div className="flex justify-between items-start">
-                  <h3 className="text-2xl font-head mb-4 flex-1">
-                    {allQuestions[currentQuestionIndex].question}
-                  </h3>
-{allQuestions[currentQuestionIndex].long_content_file_path && (
-  <button
-    onClick={() => handleViewDocument(allQuestions[currentQuestionIndex].long_content_file_path)}
-    className="ml-2 flex items-center px-3 py-1 text-white/80 hover:text-white rounded-full border border-white/20 hover:border-white/40 transition-all duration-300"
-    title="View document"
-  >
-    <FiAlertCircle className="w-4 h-4 mr-1 text-[#3b82f6]" />
-    <span className="text-sm">View Document</span>
-  </button>
-)}
-                </div>
+           <div className="flex justify-between items-start">
+  <h3 className="text-2xl font-head mb-4 flex-1">
+    {allQuestions[currentQuestionIndex].question}
+  </h3>
+  <div className="flex items-center">
+    {allQuestions[currentQuestionIndex].long_content_file_path && (
+      <button
+        onClick={() => handleViewDocument(allQuestions[currentQuestionIndex].long_content_file_path)}
+        className="ml-2 flex items-center px-3 py-1 text-white/80 hover:text-white rounded-full border border-white/20 hover:border-white/40 transition-all duration-300"
+        title="View document"
+      >
+        <FiAlertCircle className="w-4 h-4 mr-1 text-[#3b82f6]" />
+        <span className="text-sm">View Document</span>
+      </button>
+    )}
+    {/* Add the AudioButton here */}
+    <AudioButton 
+      texts={[
+        allQuestions[currentQuestionIndex].question,
+        `Options are: ${allQuestions[currentQuestionIndex].options.join(', ')}`
+      ]}
+    />
+  </div>
+</div>
                 
                 <div className="space-y-3 mb-6">
                   {allQuestions[currentQuestionIndex].options.map((option, index) => (
