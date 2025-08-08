@@ -7,6 +7,7 @@ import {FaCheck,FaTimes} from 'react-icons/fa'
 import "./Assignment.css"
 import { FiDownload, FiAlertCircle } from 'react-icons/fi';
 import AudioButton from '../../components/AudioButton'
+import { FILE_BASE_URL } from '../../services/api'; // Import the base URL from api.js
 
 const Assignments = () => {
   const { user } = useAuth()
@@ -462,7 +463,7 @@ const Assignments = () => {
        {response.feedback.long.filePath && (
   <div className="mt-4">
     <button
-      onClick={() => window.open(`${'http://localhost:3000'}${response.feedback.long.filePath}`, '_blank')}
+      onClick={() => window.open(`${FILE_BASE_URL}${response.feedback.long.filePath}`, '_blank')}
       className="flex items-center px-4 py-2 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 transition-all duration-300 text-white"
     >
       <FiDownload className="mr-2" />
@@ -513,7 +514,7 @@ const Assignments = () => {
                   <div className="mb-4">
                     {getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'image' ? (
                       <img 
-                        src={`${'http://localhost:3000'}${allQuestions[currentQuestionIndex].question_media_path}`}
+                        src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
                         alt="Question media"
                         className="w-full h-64 object-contain mx-auto"
                       />
@@ -526,7 +527,7 @@ const Assignments = () => {
                         className="w-full h-64 object-contain mx-auto"
                       >
                         <source 
-                          src={`${'http://localhost:3000'}${allQuestions[currentQuestionIndex].question_media_path}`}
+                          src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
                           type={`video/${allQuestions[currentQuestionIndex].question_media_path.split('.').pop()}`}
                         />
                         Your browser does not support the video tag.

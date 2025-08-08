@@ -1,4 +1,5 @@
-const API_BASE_URL = 'http://localhost:3000/api'; 
+export const FILE_BASE_URL = 'http://localhost:3000';
+export const API_BASE_URL = `${FILE_BASE_URL}/api`;
 
 const api = {
   async request(endpoint, method = 'GET', data = null, isAdmin = false, isFormData = false) {
