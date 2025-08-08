@@ -18,7 +18,10 @@ const AudioButton = ({ texts }) => {
       setVoices(availableVoices);
     };
 
+    // Some browsers need this event listener
     window.speechSynthesis.onvoiceschanged = loadVoices;
+    
+    // Load immediately if voices are already available
     loadVoices();
 
     return () => {
@@ -38,10 +41,11 @@ const AudioButton = ({ texts }) => {
       return;
     }
 
-    // Clean and prepare texts
+    // Clean and prepare texts with Indian English specific modifications
     const cleanedTexts = texts.map(text => 
       text.replace(/_+/g, ' ')
          .replace(/\s+/g, ' ')
+         .replace(/([a-zA-Z])\.([a-zA-Z])/g, '$1. $2') // Add space after abbreviations
          .replace(/,/g, ', ')
          .trim()
     );
@@ -59,42 +63,65 @@ const AudioButton = ({ texts }) => {
 
       const utterance = new SpeechSynthesisUtterance(cleanedTexts[currentIndex]);
       
-      // Configure utterance for deeper male voice
-      utterance.rate = 0.85; // Slightly slower for deeper effect
-      utterance.pitch = 0.8; // Lower pitch for deeper voice
+      // Configure utterance for Indian English characteristics
+      utterance.rate = 0.95; // Slightly slower for clarity
+      utterance.pitch = 1.05; // Slightly higher pitch common in Indian English
       utterance.volume = 1;
 
-      // Select the best male voice available
-      const maleVoices = voices.filter(v => 
-        v.lang.includes('en') && 
-        (v.name.toLowerCase().includes('male') || 
-         v.name.includes('David') || 
-         v.name.includes('Google UK English Male') ||
-         v.name.includes('Microsoft David Desktop') ||
-         v.name.includes('Alex') ||
-         v.name.includes('Daniel'))
+      // Prioritize Indian English voices
+      const indianVoices = voices.filter(v => 
+        v.lang === 'en-IN' || // Indian English locale
+        v.name.toLowerCase().includes('india') ||
+        v.name.toLowerCase().includes('indian') ||
+        v.name.toLowerCase().includes('ravi') || // Common Indian voice name
+        v.name.toLowerCase().includes('neela') || // Another common Indian voice
+        v.name.toLowerCase().includes('google हिन्दी') || // Hindi voices often work
+        v.name.toLowerCase().includes('hin') // Hindi abbreviation
       );
 
-      // Sort by quality (prefer voices that explicitly mention male or have known male names)
-      maleVoices.sort((a, b) => {
-        const aScore = a.name.toLowerCase().includes('male') ? 2 : 
-                      (a.name.includes('David') || a.name.includes('Alex') || a.name.includes('Daniel')) ? 1 : 0;
-        const bScore = b.name.toLowerCase().includes('male') ? 2 : 
-                      (b.name.includes('David') || b.name.includes('Alex') || b.name.includes('Daniel')) ? 1 : 0;
-        return bScore - aScore;
-      });
+      // Fallback to other English voices that might sound closer to Indian accent
+      const fallbackVoices = voices.filter(v => 
+        v.lang.includes('en') && 
+        !v.lang.includes('en-US') // Avoid American voices
+      );
 
-      if (maleVoices.length > 0) {
-        utterance.voice = maleVoices[0];
-        console.log('Using voice:', maleVoices[0].name);
-      } else if (voices.length > 0) {
-        // Fallback to any English voice if no male voices found
-        const englishVoice = voices.find(v => v.lang.includes('en'));
-        if (englishVoice) {
-          utterance.voice = englishVoice;
-          console.log('Fallback to English voice:', englishVoice.name);
-        }
+      // Select the best available voice
+      if (indianVoices.length > 0) {
+        // Sort by most likely to be good Indian English
+        indianVoices.sort((a, b) => {
+          const aScore = a.lang === 'en-IN' ? 3 : 
+                       a.name.toLowerCase().includes('ravi') ? 2 : 
+                       a.name.toLowerCase().includes('india') ? 1 : 0;
+          const bScore = b.lang === 'en-IN' ? 3 : 
+                       b.name.toLowerCase().includes('ravi') ? 2 : 
+                       b.name.toLowerCase().includes('india') ? 1 : 0;
+          return bScore - aScore;
+        });
+        
+        utterance.voice = indianVoices[0];
+        console.log('Using Indian English voice:', indianVoices[0].name);
+      } else if (fallbackVoices.length > 0) {
+        // Prefer UK English as it's closer to Indian English than US
+        fallbackVoices.sort((a, b) => {
+          const aScore = a.lang.includes('en-GB') ? 1 : 0;
+          const bScore = b.lang.includes('en-GB') ? 1 : 0;
+          return bScore - aScore;
+        });
+        
+        utterance.voice = fallbackVoices[0];
+        console.log('Fallback to English voice:', fallbackVoices[0].name);
+        
+        // Adjust settings to make it sound more Indian-like
+        utterance.rate = 0.92;
+        utterance.pitch = 1.1;
       }
+
+      // Add Indian English specific pronunciation adjustments
+      utterance.text = utterance.text
+        .replace(/\bth\b/gi, 't') // Common Indian pronunciation of "th" as "t"
+        .replace(/v/g, 'w') // Some Indian accents pronounce "v" as "w"
+        .replace(/\bthe\b/gi, 'da') // Common pronunciation of "the" as "da"
+        .replace(/\bthat\b/gi, 'dat'); // Common pronunciation of "that" as "dat"
 
       utterance.onboundary = (event) => {
         console.log('Speech progress:', event.charIndex, 'of', event.utterance.text.length);
@@ -103,7 +130,7 @@ const AudioButton = ({ texts }) => {
       utterance.onend = () => {
         console.log('Finished speaking:', cleanedTexts[currentIndex]);
         currentIndex++;
-        setTimeout(speakNext, 300); // Add small delay between utterances
+        setTimeout(speakNext, 500); // Slightly longer delay between utterances
       };
 
       utterance.onerror = (event) => {
@@ -113,8 +140,8 @@ const AudioButton = ({ texts }) => {
         // Fallback - try speaking without voice selection
         if (event.error === 'synthesis-failed') {
           const fallbackUtterance = new SpeechSynthesisUtterance(cleanedTexts[currentIndex]);
-          fallbackUtterance.rate = 0.85;
-          fallbackUtterance.pitch = 0.8;
+          fallbackUtterance.rate = 0.95;
+          fallbackUtterance.pitch = 1.05;
           window.speechSynthesis.speak(fallbackUtterance);
         }
       };
