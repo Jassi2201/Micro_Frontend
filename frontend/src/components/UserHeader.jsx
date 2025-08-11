@@ -60,7 +60,7 @@ const UserHeader = () => {
                 </div>
                 <div className="text-sm text-right">
                   <p className="font-medium text-gray-800 truncate max-w-xs">{user.email}</p>
-                  <p className="text-xs text-gray-500">Student</p>
+                 
                 </div>
               </div>
             )}
