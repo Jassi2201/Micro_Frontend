@@ -1,14 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../services/auth';
 import { 
-  FiHome,
   FiBook,
   FiTrendingUp,
   FiLogOut,
-  FiUser,
-  FiAward,
-  FiSettings
+  FiUser
 } from 'react-icons/fi';
+import Logo from '../assets/Logo.png'; // Adjust the path and file extension as needed
 
 const UserHeader = () => {
   const location = useLocation();
@@ -25,11 +23,13 @@ const UserHeader = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
           <div className="flex items-center">
-            <Link to="/user/progress" className="flex items-center">
-              <span className="bg-indigo-600 text-white rounded-lg p-2 mr-3">
-                <FiUser size={16} />
-              </span>
-              <h1 className="text-lg font-semibold text-gray-800">LearnHub</h1>
+            <Link to="/user" className="flex items-center">
+              <img 
+                src={Logo} 
+                alt="LearnHub Logo" 
+                className="h-8 w-auto mr-3" // Adjust size as needed
+              />
+            
             </Link>
           </div>
 

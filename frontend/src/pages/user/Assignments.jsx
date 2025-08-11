@@ -228,16 +228,16 @@ const Assignments = () => {
     setResults(null)
   }
 
-  const getFileType = (filePath) => {
-    if (!filePath) return null;
-    const extension = filePath.split('.').pop().toLowerCase();
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
-      return 'image';
-    } else if (['mp4', 'webm', 'ogg'].includes(extension)) {
-      return 'video';
-    }
-    return null;
+const getFileType = (filePath) => {
+  if (!filePath) return null;
+  const extension = filePath.split('.').pop().toLowerCase();
+  if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+    return 'image';
+  } else if (['mp4', 'webm', 'ogg'].includes(extension)) {
+    return 'video';
   }
+  return null;
+}
 
   if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>
 
