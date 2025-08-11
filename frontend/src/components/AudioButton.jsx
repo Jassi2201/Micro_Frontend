@@ -119,7 +119,7 @@ const AudioButton = ({ texts }) => {
       // Add Indian English specific pronunciation adjustments
       utterance.text = utterance.text
         .replace(/\bth\b/gi, 't') // Common Indian pronunciation of "th" as "t"
-        .replace(/v/g, 'w') // Some Indian accents pronounce "v" as "w"
+        .replace(/v/g, 'w') // Some Indian accents pronounce "v" as "w"a
         .replace(/\bthe\b/gi, 'da') // Common pronunciation of "the" as "da"
         .replace(/\bthat\b/gi, 'dat'); // Common pronunciation of "that" as "dat"
 

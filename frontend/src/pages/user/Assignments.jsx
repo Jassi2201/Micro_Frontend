@@ -242,10 +242,10 @@ const Assignments = () => {
   if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-2xl font-head mb-6">My Assessments</h1>
+    <div className="container mx-auto px-4 py-3"> {/* Adjusted padding */}
+      <h1 className="text-xl font-head mb-3">My Assessments</h1> {/* Adjusted margin */}
       
-      {error && <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">{error}</div>}
+      {error && <div className="mb-3 p-2 bg-red-100 text-red-700 rounded text-sm">{error}</div>}
 
       {!selectedAssignment ? (
         <div>
@@ -293,13 +293,13 @@ const Assignments = () => {
             </div>
           )}
         </div>
-      ) : submitted ? (
-        <div className="bg-white font-body rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">{selectedAssignment.name} - Results</h2>
+  ) : submitted ? (
+        <div className="bg-white font-body rounded-lg shadow p-4"> {/* Adjusted padding */}
+          <div className="flex justify-between items-center mb-3"> {/* Adjusted margin */}
+            <h2 className="text-xl font-bold">{selectedAssignment.name} - Results</h2>
             <button
               onClick={handleBackToAssignments}
-              className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+              className="bg-gray-600 text-white px-3 py-1.5 rounded text-sm" /* Adjusted padding */
             >
               Back to Assessments
             </button>
@@ -461,60 +461,35 @@ const Assignments = () => {
               <p>Loading results...</p>
             </div>
           )}
-        </div>
+           </div>
       ) : (
-        <div className="bg-white font-head rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-xl font-semibold">{selectedAssignment.name}</h2>
-            <div>
+        <div className="mb-3"> {/* Adjusted margin */}
+          <div className="flex justify-between items-center mb-3"> {/* Adjusted margin */}
+            <h2 className="text-lg font-semibold">{selectedAssignment.name}</h2>
+            <div className="text-sm">
               Question {currentQuestionIndex + 1} of {allQuestions.length}
             </div>
           </div>
 
           {allQuestions.length > 0 && (
-            <div>
-              {questionsByCategory.map(category => {
-                if (category.questions.some(q => q.id === allQuestions[currentQuestionIndex].id)) {
-                  return (
-                    <div key={category.category_id} className="mb-2">
-                      <span className="text-sm font-bold text-blue-600">
-                        Category: {category.category_name}
-                      </span>
-                    </div>
-                  )
-                }
-                return null
-              })}
-              
-              <div className="mb-6">
-                {allQuestions[currentQuestionIndex].question_media_path && (
-                  <div className="mb-4">
-                    {getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'image' ? (
-                      <img 
-                        src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
-                        alt="Question media"
-                        className="w-full h-64 object-contain mx-auto"
-                      />
-                    ) : getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'video' ? (
-                      <video 
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-64 object-contain mx-auto"
-                      >
-                        <source 
-                          src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
-                          type={`video/${allQuestions[currentQuestionIndex].question_media_path.split('.').pop()}`}
-                        />
-                        Your browser does not support the video tag.
-                      </video>
-                    ) : null}
-                  </div>
-                )}
+            <div className="flex flex-col lg:flex-row gap-5"> {/* Adjusted gap */}
+              {/* Left side - Question and Options */}
+              <div className="lg:w-1/2">
+                {questionsByCategory.map(category => {
+                  if (category.questions.some(q => q.id === allQuestions[currentQuestionIndex].id)) {
+                    return (
+                      <div key={category.category_id} className="mb-2"> {/* Adjusted margin */}
+                        <span className="text-xs font-bold text-blue-600">
+                          Category: {category.category_name}
+                        </span>
+                      </div>
+                    )
+                  }
+                  return null
+                })}
                 
-                <div className="flex justify-between items-start mb-4">
-                  <h3 className="text-lg font-head flex-1">
+                <div className="flex justify-between items-start mb-3"> {/* Adjusted margin */}
+                  <h3 className="text-md font-head flex-1">
                     {allQuestions[currentQuestionIndex].question}
                   </h3>
                   <AudioButton texts={[
@@ -526,21 +501,21 @@ const Assignments = () => {
                 {allQuestions[currentQuestionIndex].long_content_file_path && (
                   <button
                     onClick={() => handleViewDocument(allQuestions[currentQuestionIndex].long_content_file_path)}
-                    className="mb-4 flex items-center px-3 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-full border border-blue-200"
+                    className="mb-3 flex items-center px-2.5 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-full border border-blue-200 text-xs" /* Adjusted padding */
                     title="View document"
                   >
-                    <svg className="w-5 h-5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-sm">View Document</span>
+                    <span className="text-xs">View Document</span>
                   </button>
                 )}
                 
-                <div className="space-y-3 mb-6">
+                <div className="space-y-2.5 mb-3"> {/* Adjusted spacing */}
                   {allQuestions[currentQuestionIndex].options.map((option, index) => (
                     <div 
                       key={index} 
-                      className={`p-3 border font-body rounded cursor-pointer ${
+                      className={`p-2.5 border font-body rounded cursor-pointer text-sm ${ /* Adjusted padding */
                         userAnswers[allQuestions[currentQuestionIndex].id] === index 
                           ? 'bg-blue-100 border-blue-500' 
                           : 'hover:bg-gray-50'
@@ -551,58 +526,93 @@ const Assignments = () => {
                     </div>
                   ))}
                 </div>
-                
-                {showConfidencePopup && (
-                  <ConfidencePopup
-                    isOpen={showConfidencePopup}
-                    onClose={() => setShowConfidencePopup(false)}
-                    onConfidenceSelect={handleConfidenceSelect}
-                    questionId={allQuestions[currentQuestionIndex]?.id}
-                    currentAnswer={currentAnswerText}
-                  />
-                )}
               </div>
 
-              <div className="flex justify-between">
-                <button
-                  onClick={handlePrevQuestion}
-                  disabled={currentQuestionIndex === 0}
-                  className={`px-4 py-2 rounded ${
-                    currentQuestionIndex === 0 
-                      ? 'bg-gray-300 cursor-not-allowed' 
-                      : 'bg-gray-600 text-white hover:bg-gray-700'
-                  }`}
-                >
-                  Previous
-                </button>
-                
-                {currentQuestionIndex < allQuestions.length - 1 ? (
-                  <button
-                    onClick={handleNextQuestion}
-                    disabled={userAnswers[allQuestions[currentQuestionIndex].id] === undefined}
-                    className={`px-4 py-2 rounded ${
-                      userAnswers[allQuestions[currentQuestionIndex].id] === undefined
-                        ? 'bg-gray-300 cursor-not-allowed'
-                        : 'bg-blue-600 text-white hover:bg-blue-700'
-                    }`}
-                  >
-                    Next
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleSubmit}
-                    disabled={Object.keys(userAnswers).length !== allQuestions.length}
-                    className={`px-4 py-2 rounded ${
-                      Object.keys(userAnswers).length !== allQuestions.length
-                        ? 'bg-gray-300 cursor-not-allowed'
-                        : 'bg-green-600 text-white hover:bg-green-700'
-                    }`}
-                  >
-                    Submit Assignment
-                  </button>
+              {/* Right side - Media */}
+              <div className="lg:w-1/2 flex items-center justify-center">
+                {allQuestions[currentQuestionIndex].question_media_path && (
+                  <div className="w-full">
+                    {getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'image' ? (
+                      <img 
+                        src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
+                        alt="Question media"
+                        className="w-full max-w-sm mx-auto object-contain" 
+                        style={{ maxHeight: '250px' }}
+                      />
+                    ) : getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'video' ? (
+                      <div className="w-full max-w-sm mx-auto"> 
+                        <video 
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          controls
+                          className="w-full"
+                          style={{ maxHeight: '250px' }} /* Adjusted height */
+                        >
+                          <source 
+                            src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
+                            type={`video/${allQuestions[currentQuestionIndex].question_media_path.split('.').pop()}`}
+                          />
+                          Your browser does not support the video tag.
+                        </video>
+                      </div>
+                    ) : null}
+                  </div>
                 )}
               </div>
             </div>
+          )}
+
+          {/* Navigation buttons - adjusted spacing */}
+          <div className="flex justify-between mt-3"> {/* Adjusted margin */}
+            <button
+              onClick={handlePrevQuestion}
+              disabled={currentQuestionIndex === 0}
+              className={`px-3.5 py-1.5 rounded text-sm ${ /* Adjusted padding */
+                currentQuestionIndex === 0 
+                  ? 'bg-gray-300 cursor-not-allowed' 
+                  : 'bg-gray-600 text-white hover:bg-gray-700'
+              }`}
+            >
+              Previous
+            </button>
+            
+            {currentQuestionIndex < allQuestions.length - 1 ? (
+              <button
+                onClick={handleNextQuestion}
+                disabled={userAnswers[allQuestions[currentQuestionIndex].id] === undefined}
+                className={`px-3.5 py-1.5 rounded text-sm ${ /* Adjusted padding */
+                  userAnswers[allQuestions[currentQuestionIndex].id] === undefined
+                    ? 'bg-gray-300 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                disabled={Object.keys(userAnswers).length !== allQuestions.length}
+                className={`px-3.5 py-1.5 rounded text-sm ${ /* Adjusted padding */
+                  Object.keys(userAnswers).length !== allQuestions.length
+                    ? 'bg-gray-300 cursor-not-allowed'
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
+              >
+                Submit Assignment
+              </button>
+            )}
+          </div>
+
+          {showConfidencePopup && (
+            <ConfidencePopup
+              isOpen={showConfidencePopup}
+              onClose={() => setShowConfidencePopup(false)}
+              onConfidenceSelect={handleConfidenceSelect}
+              questionId={allQuestions[currentQuestionIndex]?.id}
+              currentAnswer={currentAnswerText}
+            />
           )}
         </div>
       )}

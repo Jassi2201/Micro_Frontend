@@ -1,11 +1,11 @@
 import { Outlet } from 'react-router-dom';
-import UserSidebar from '../components/UserSidebar';
+import UserHeader from '../components/UserHeader';
 
 const UserLayout = () => {
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <UserSidebar />
-      <div className="flex-1 overflow-auto h-screen p-4 sm:p-6">
+    <div className="min-h-screen bg-gray-50">
+      <UserHeader />
+      <div className="container mx-auto p-4 sm:p-2">
         <Outlet />
       </div>
     </div>
