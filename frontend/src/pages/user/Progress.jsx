@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import UserSidebar from '../../components/UserSidebar'
 import api from '../../services/api'
 import { useAuth } from '../../services/auth'
 import { FiBook, FiCheckCircle, FiXCircle, FiBarChart2, FiAward, FiClock } from 'react-icons/fi'
@@ -152,50 +151,66 @@ const Progress = () => {
           </div>
 
           {/* Recent Activity */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-            <h2 className="text-lg sm:text-xl font-head text-gray-800 mb-4">Recent Activity</h2>
-            
-            <div className="overflow-x-auto font-body">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">Question</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">Category</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">Your Answer</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">Correct Answer</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">Status</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-black uppercase tracking-wider">Time</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y font-body divide-gray-200">
-                  {progress.recentActivity.map((activity) => (
-                    <tr key={activity.responseId}>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{activity.question}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{activity.category}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{activity.userAnswer}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{activity.correctAnswer}</td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                          activity.isCorrect 
-                            ? activity.status.includes('sure') 
-                              ? 'bg-green-100 text-green-800' 
-                              : 'bg-blue-100 text-blue-800'
-                            : activity.status.includes('sure') 
-                              ? 'bg-red-100 text-red-800' 
-                              : 'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {activity.status.replace(/_/g, ' ')}
-                        </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {new Date(activity.responseTime).toLocaleString()}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+    <h2 className="text-lg sm:text-xl font-head text-gray-800 mb-4">Recent Activity</h2>
+  
+  <div className="overflow-x-auto w-full">
+    <table className="w-full table-fixed divide-y divide-gray-200">
+      <colgroup>
+        <col className="w-[30%]" /> {/* Question */}
+        <col className="w-[15%]" /> {/* Category */}
+        <col className="w-[15%]" /> {/* Your Answer */}
+        <col className="w-[15%]" /> {/* Correct Answer */}
+        <col className="w-[15%]" /> {/* Status */}
+        <col className="w-[10%]" /> {/* Time */}
+      </colgroup>
+     <thead className="bg-gray-50">
+        <tr className="border border-opacity-20 border-white">
+          <th className="px-3 py-3 text-left text-xs font-bold text-black uppercase tracking-wider truncate">Question</th>
+          <th className="px-3 py-3 text-left text-xs font-bold text-black uppercase tracking-wider truncate">Category</th>
+          <th className="px-3 py-3 text-left text-xs font-bold text-black uppercase tracking-wider truncate">Your Answer</th>
+          <th className="px-3 py-3 text-left text-xs font-bold text-black uppercase tracking-wider truncate">Correct Answer</th>
+          <th className="px-3 py-3 text-left text-xs font-bold text-black uppercase tracking-wider truncate">Status</th>
+          <th className="px-3 py-3 text-left text-xs font-bold text-black uppercase tracking-wider truncate">Time</th>
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y font-body divide-gray-200">
+        {progress.recentActivity.map((activity) => (
+          <tr key={activity.responseId}>
+            <td className="px-3 py-4 text-sm font-medium text-gray-500 truncate" title={activity.question}>
+              {activity.question}
+            </td>
+            <td className="px-3 py-4 text-sm text-gray-500 truncate" title={activity.category}>
+              {activity.category}
+            </td>
+            <td className="px-3 py-4 text-sm text-gray-500 truncate" title={activity.userAnswer}>
+              {activity.userAnswer}
+            </td>
+            <td className="px-3 py-4 text-sm text-gray-500 truncate" title={activity.correctAnswer}>
+              {activity.correctAnswer}
+            </td>
+            <td className="px-3 py-4 truncate">
+              <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                activity.isCorrect 
+                  ? activity.status.includes('sure') 
+                    ? 'bg-gradient-to-br from-green-900 to-green-700 text-green-100' 
+                    : 'bg-gradient-to-br from-blue-900 to-blue-700 text-blue-100'
+                  : activity.status.includes('sure') 
+                    ? 'bg-gradient-to-br from-red-900 to-red-700 text-red-100' 
+                    : 'bg-gradient-to-br from-yellow-900 to-yellow-700 text-yellow-100'
+              } truncate`} title={activity.status.replace(/_/g, ' ')}>
+                {activity.status.replace(/_/g, ' ')}
+              </span>
+            </td>
+            <td className="px-3 py-4 text-sm text-gray-500 truncate" title={new Date(activity.responseTime).toLocaleString()}>
+              {new Date(activity.responseTime).toLocaleDateString()}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
         </>
       )}
     </>

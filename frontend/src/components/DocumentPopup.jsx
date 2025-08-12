@@ -85,7 +85,7 @@ const DocumentPopup = ({ isOpen, onClose, documentPath }) => {
             </div>
           ) : documentPath ? (
             <>
-              {extractedText && (
+              {/* {extractedText && (
                 <div className="mb-4 p-3 bg-gray-50 rounded">
                   <h4 className="font-medium mb-2">Extracted Text (Readable by Audio):</h4>
                   <div className="max-h-40 overflow-y-auto text-sm text-gray-700">
@@ -99,7 +99,7 @@ const DocumentPopup = ({ isOpen, onClose, documentPath }) => {
                     )}
                   </div>
                 </div>
-              )}
+              )} */}
               
               <iframe 
                 src={`${FILE_BASE_URL}${documentPath}`}

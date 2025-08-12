@@ -18,16 +18,53 @@ const AudioButton = ({ texts }) => {
       setVoices(availableVoices);
     };
 
-    // Some browsers need this event listener
     window.speechSynthesis.onvoiceschanged = loadVoices;
-    
-    // Load immediately if voices are already available
     loadVoices();
 
     return () => {
       window.speechSynthesis.onvoiceschanged = null;
     };
   }, []);
+
+  // Function to split text into manageable chunks
+  const splitTextIntoChunks = (text) => {
+    // First split by major sections (numbered points)
+    const sections = text.split(/\d+\.\s+/g).filter(section => section.trim());
+    
+    let chunks = [];
+    
+    sections.forEach(section => {
+      // Split each section into paragraphs
+      const paragraphs = section.split(/\n\s*\n/).filter(p => p.trim());
+      
+      paragraphs.forEach(paragraph => {
+        // Clean up the paragraph
+        let cleanParagraph = paragraph
+          .replace(/_+/g, ' ')
+          .replace(/\s+/g, ' ')
+          .replace(/([a-zA-Z])\.([a-zA-Z])/g, '$1. $2')
+          .replace(/,/g, ', ')
+          .trim();
+        
+        // Split long paragraphs into sentences
+        const sentences = cleanParagraph.split(/(?<=[.!?])\s+/);
+        
+        // Group sentences into chunks of ~200 characters
+        let currentChunk = '';
+        sentences.forEach(sentence => {
+          if ((currentChunk + sentence).length <= 200) {
+            currentChunk += (currentChunk ? ' ' : '') + sentence;
+          } else {
+            if (currentChunk) chunks.push(currentChunk);
+            currentChunk = sentence;
+          }
+        });
+        if (currentChunk) chunks.push(currentChunk);
+      });
+    });
+    
+    return chunks;
+  };
 
   const handlePlay = () => {
     if (!('speechSynthesis' in window)) {
@@ -41,53 +78,50 @@ const AudioButton = ({ texts }) => {
       return;
     }
 
-    // Clean and prepare texts with Indian English specific modifications
-    const cleanedTexts = texts.map(text => 
-      text.replace(/_+/g, ' ')
-         .replace(/\s+/g, ' ')
-         .replace(/([a-zA-Z])\.([a-zA-Z])/g, '$1. $2') // Add space after abbreviations
-         .replace(/,/g, ', ')
-         .trim()
-    );
+    // Process all texts into chunks
+    let allChunks = [];
+    texts.forEach(text => {
+      const chunks = splitTextIntoChunks(text);
+      allChunks = [...allChunks, ...chunks];
+    });
 
-    console.log('Cleaned texts:', cleanedTexts);
+    console.log('Processed text chunks:', allChunks);
     setIsPlaying(true);
 
     let currentIndex = 0;
 
     const speakNext = () => {
-      if (currentIndex >= cleanedTexts.length) {
+      if (currentIndex >= allChunks.length) {
         setIsPlaying(false);
         return;
       }
 
-      const utterance = new SpeechSynthesisUtterance(cleanedTexts[currentIndex]);
+      const utterance = new SpeechSynthesisUtterance(allChunks[currentIndex]);
       
       // Configure utterance for Indian English characteristics
-      utterance.rate = 0.95; // Slightly slower for clarity
-      utterance.pitch = 1.05; // Slightly higher pitch common in Indian English
+      utterance.rate = 0.95;
+      utterance.pitch = 1.05;
       utterance.volume = 1;
 
       // Prioritize Indian English voices
       const indianVoices = voices.filter(v => 
-        v.lang === 'en-IN' || // Indian English locale
+        v.lang === 'en-IN' ||
         v.name.toLowerCase().includes('india') ||
         v.name.toLowerCase().includes('indian') ||
-        v.name.toLowerCase().includes('ravi') || // Common Indian voice name
-        v.name.toLowerCase().includes('neela') || // Another common Indian voice
-        v.name.toLowerCase().includes('google हिन्दी') || // Hindi voices often work
-        v.name.toLowerCase().includes('hin') // Hindi abbreviation
+        v.name.toLowerCase().includes('ravi') ||
+        v.name.toLowerCase().includes('neela') ||
+        v.name.toLowerCase().includes('google हिन्दी') ||
+        v.name.toLowerCase().includes('hin')
       );
 
-      // Fallback to other English voices that might sound closer to Indian accent
+      // Fallback to other English voices
       const fallbackVoices = voices.filter(v => 
         v.lang.includes('en') && 
-        !v.lang.includes('en-US') // Avoid American voices
+        !v.lang.includes('en-US')
       );
 
       // Select the best available voice
       if (indianVoices.length > 0) {
-        // Sort by most likely to be good Indian English
         indianVoices.sort((a, b) => {
           const aScore = a.lang === 'en-IN' ? 3 : 
                        a.name.toLowerCase().includes('ravi') ? 2 : 
@@ -97,49 +131,38 @@ const AudioButton = ({ texts }) => {
                        b.name.toLowerCase().includes('india') ? 1 : 0;
           return bScore - aScore;
         });
-        
         utterance.voice = indianVoices[0];
-        console.log('Using Indian English voice:', indianVoices[0].name);
       } else if (fallbackVoices.length > 0) {
-        // Prefer UK English as it's closer to Indian English than US
         fallbackVoices.sort((a, b) => {
           const aScore = a.lang.includes('en-GB') ? 1 : 0;
           const bScore = b.lang.includes('en-GB') ? 1 : 0;
           return bScore - aScore;
         });
-        
         utterance.voice = fallbackVoices[0];
-        console.log('Fallback to English voice:', fallbackVoices[0].name);
-        
-        // Adjust settings to make it sound more Indian-like
         utterance.rate = 0.92;
         utterance.pitch = 1.1;
       }
 
       // Add Indian English specific pronunciation adjustments
       utterance.text = utterance.text
-        .replace(/\bth\b/gi, 't') // Common Indian pronunciation of "th" as "t"
-        .replace(/v/g, 'w') // Some Indian accents pronounce "v" as "w"a
-        .replace(/\bthe\b/gi, 'da') // Common pronunciation of "the" as "da"
-        .replace(/\bthat\b/gi, 'dat'); // Common pronunciation of "that" as "dat"
-
-      utterance.onboundary = (event) => {
-        console.log('Speech progress:', event.charIndex, 'of', event.utterance.text.length);
-      };
+        .replace(/\bth\b/gi, 't')
+        .replace(/v/g, 'w')
+        .replace(/\bthe\b/gi, 'da')
+        .replace(/\bthat\b/gi, 'dat');
 
       utterance.onend = () => {
-        console.log('Finished speaking:', cleanedTexts[currentIndex]);
+        console.log('Finished speaking chunk:', currentIndex);
         currentIndex++;
-        setTimeout(speakNext, 500); // Slightly longer delay between utterances
+        setTimeout(speakNext, 300); // Short pause between chunks
       };
 
       utterance.onerror = (event) => {
-        console.error('Speech error:', event.error, 'on text:', cleanedTexts[currentIndex]);
+        console.error('Speech error:', event.error);
         setIsPlaying(false);
         
         // Fallback - try speaking without voice selection
         if (event.error === 'synthesis-failed') {
-          const fallbackUtterance = new SpeechSynthesisUtterance(cleanedTexts[currentIndex]);
+          const fallbackUtterance = new SpeechSynthesisUtterance(allChunks[currentIndex]);
           fallbackUtterance.rate = 0.95;
           fallbackUtterance.pitch = 1.05;
           window.speechSynthesis.speak(fallbackUtterance);
@@ -147,7 +170,6 @@ const AudioButton = ({ texts }) => {
       };
 
       try {
-        console.log('Attempting to speak:', cleanedTexts[currentIndex]);
         window.speechSynthesis.speak(utterance);
       } catch (error) {
         console.error('Speak error:', error);
