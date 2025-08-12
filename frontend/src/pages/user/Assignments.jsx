@@ -522,15 +522,9 @@ const getFileType = (filePath) => {
         return null
       })}
       
-      <div className="flex justify-between items-start mb-3">
-        <h3 className="text-md font-head flex-1">
-          {allQuestions[currentQuestionIndex].question}
-        </h3>
-        <AudioButton texts={[
-          allQuestions[currentQuestionIndex].question,
-          `Options are: ${allQuestions[currentQuestionIndex].options.join(', ')}`
-        ]} />
-      </div>
+     <h3 className="text-md font-head mb-3">
+  {allQuestions[currentQuestionIndex].question}
+</h3>
       
       {allQuestions[currentQuestionIndex].long_content_file_path && (
         <button
