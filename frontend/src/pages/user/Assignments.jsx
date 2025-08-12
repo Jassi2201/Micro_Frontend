@@ -255,12 +255,12 @@ const getFileType = (filePath) => {
           ) : (
             <div className="grid gap-6 font-head md:grid-cols-2 lg:grid-cols-3 mb-8">
               {assignments.map((assignment) => (
-                <div key={assignment.id} className="bg-white rounded-lg shadow p-6">
+                <div key={assignment.id} className="bg-white rounded-lg shadow p-6 border">
                   <h3 className="text-lg font-semibold mb-2">{assignment.name}</h3>
                   <p className="text-gray-600 mb-4">Created: {new Date(assignment.createdAt).toLocaleDateString()}</p>
                   <button 
                     onClick={() => startAssignment(assignment.id)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    className="bg-blue-600 text-white  px-4 py-2 rounded hover:bg-blue-700"
                   >
                     Start Assessment
                   </button>
@@ -275,7 +275,7 @@ const getFileType = (filePath) => {
           ) : (
             <div className="grid font-body gap-6 md:grid-cols-2 lg:grid-cols-3">
               {completedAssignments.map((assignment) => (
-                <div key={assignment.id} className="bg-white rounded-lg shadow p-6">
+                <div key={assignment.id} className="bg-white rounded-lg shadow p-6 border">
                   <h3 className="text-lg font-semibold mb-2">{assignment.name}</h3>
                   <p className="text-gray-600 mb-2">Completed: {new Date(assignment.completedAt).toLocaleDateString()}</p>
                   <div className="mb-4">

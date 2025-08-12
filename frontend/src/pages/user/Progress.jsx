@@ -39,7 +39,7 @@ const Progress = () => {
           {/* Overall Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {/* Total Assignments Card */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white p-4 rounded-xl shadow-sm border ">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs sm:text-sm font-head text-gray-500">Total Assessments</p>
@@ -52,7 +52,7 @@ const Progress = () => {
             </div>
 
             {/* Questions Attempted Card */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white p-4 rounded-xl shadow-sm border ">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs sm:text-sm font-head text-gray-500">Questions Attempted</p>
@@ -65,7 +65,7 @@ const Progress = () => {
             </div>
 
             {/* Correct Answers Card */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white p-4 rounded-xl shadow-sm border ">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs sm:text-sm font-head text-gray-500">Correct Answers</p>
@@ -82,7 +82,7 @@ const Progress = () => {
             </div>
 
             {/* Mastery Level Card */}
-            <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-100">
+            <div className="bg-white p-4 rounded-xl shadow-sm border ">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs sm:text-sm font-head text-gray-500">Mastery Level</p>
@@ -100,7 +100,7 @@ const Progress = () => {
           </div>
 
           {/* Categories Progress */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+          <div className="bg-white rounded-xl shadow-sm border  p-6 mb-8">
             <h2 className="text-lg sm:text-xl font-head text-gray-800 mb-4">Category-wise Progress</h2>
             
             <div className="space-y-4">
@@ -151,7 +151,7 @@ const Progress = () => {
           </div>
 
           {/* Recent Activity */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+        <div className="bg-white rounded-xl shadow-sm border  p-6">
     <h2 className="text-lg sm:text-xl font-head text-gray-800 mb-4">Recent Activity</h2>
   
   <div className="overflow-x-auto w-full">
@@ -165,7 +165,7 @@ const Progress = () => {
         <col className="w-[10%]" /> {/* Time */}
       </colgroup>
      <thead className="bg-gray-50">
-        <tr className="border border-opacity-20 border-white">
+        <tr className="border border-opacity-2">
           <th className="px-3 py-3 text-left text-xs font-bold text-black uppercase tracking-wider truncate">Question</th>
           <th className="px-3 py-3 text-left text-xs font-bold text-black uppercase tracking-wider truncate">Category</th>
           <th className="px-3 py-3 text-left text-xs font-bold text-black uppercase tracking-wider truncate">Your Answer</th>
