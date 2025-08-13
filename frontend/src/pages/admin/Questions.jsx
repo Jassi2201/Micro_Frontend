@@ -23,7 +23,9 @@ const Questions = () => {
     shortContent: '',
     longContentText: '',
     longContentFile: null,
-    questionMedia: null
+    questionMedia: null,
+    longContentAudio: null,      // New field
+  questionAnswerAudio: null    // New field
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -163,6 +165,14 @@ const Questions = () => {
       if (formData.questionMedia) {
         formDataToSend.append('questionMedia', formData.questionMedia);
       }
+        // Add new audio files
+    if (formData.longContentAudio) {
+      formDataToSend.append('longContentAudio', formData.longContentAudio);
+    }
+    
+    if (formData.questionAnswerAudio) {
+      formDataToSend.append('questionAnswerAudio', formData.questionAnswerAudio);
+    }
 
       if (isEditing) {
         await api.updateQuestion(formData.id, formDataToSend);
@@ -187,7 +197,9 @@ const Questions = () => {
       shortContent: '',
       longContentText: '',
       longContentFile: null,
-      questionMedia: null
+      questionMedia: null,
+      longContentAudio: null,      // New field
+    questionAnswerAudio: null    // New field
     });
     setIsEditing(false);
   };
@@ -209,7 +221,9 @@ const Questions = () => {
       shortContent: editedQuestion.short_content,
       longContentText: editedQuestion.long_content_text,
       longContentFile: null,
-      questionMedia: null
+      questionMedia: null,
+      longContentAudio: null,      // New field
+    questionAnswerAudio: null    // New field
     });
     
     setIsEditing(true);

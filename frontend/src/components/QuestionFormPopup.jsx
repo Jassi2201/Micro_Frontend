@@ -114,6 +114,30 @@ const QuestionFormPopup = ({
             ))}
           </div>
 
+
+{/* Question Answer Audio Upload */}
+<div className="space-y-2">
+  <label className="block text-sm font-body text-gray-700">Answer Explanation Audio</label>
+  <div className="flex items-center justify-center w-full">
+    <label className="flex flex-col w-full border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors">
+      <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4">
+        <FiUpload className="w-8 h-8 text-gray-400 mb-2" />
+        <p className="text-sm text-gray-500 text-center">
+          {formData.questionAnswerAudio 
+            ? formData.questionAnswerAudio.name 
+            : 'Click to upload answer explanation audio (MP3/MP4)'}
+        </p>
+      </div>
+      <input 
+        type="file" 
+        name="questionAnswerAudio"
+        onChange={handleFileChange}
+        className="hidden"
+        accept="audio/*"
+      />
+    </label>
+  </div>
+</div>
           {/* Short Explanation */}
           <div className="space-y-2">
             <label className="block text-sm font-body text-gray-700">Short Explanation</label>
@@ -163,7 +187,28 @@ const QuestionFormPopup = ({
               </label>
             </div>
           </div>
-
+<div className="space-y-2">
+  <label className="block text-sm font-body text-gray-700">Detailed Explanation Audio</label>
+  <div className="flex items-center justify-center w-full">
+    <label className="flex flex-col w-full border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors">
+      <div className="flex flex-col items-center justify-center pt-5 pb-6 px-4">
+        <FiUpload className="w-8 h-8 text-gray-400 mb-2" />
+        <p className="text-sm text-gray-500 text-center">
+          {formData.longContentAudio 
+            ? formData.longContentAudio.name 
+            : 'Click to upload audio explanation (MP3/MP4)'}
+        </p>
+      </div>
+      <input 
+        type="file" 
+        name="longContentAudio"
+        onChange={handleFileChange}
+        className="hidden"
+        accept="audio/*"
+      />
+    </label>
+  </div>
+</div>
           {/* Form Actions */}
           <div className="flex justify-end space-x-3 pt-4">
             <button
