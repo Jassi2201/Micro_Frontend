@@ -55,7 +55,7 @@ const UserHeader = () => {
           <div className="flex items-center space-x-2">
             {user && (
               <div className="hidden md:flex items-center space-x-2">
-                <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-sm font-medium">
+                <div className="h-8 w-8 rounded-full bg-indigo-100 border flex items-center justify-center text-indigo-600 text-sm font-medium">
                   {user.email.charAt(0).toUpperCase()}
                 </div>
                 <div className="text-sm text-right">
