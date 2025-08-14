@@ -483,7 +483,7 @@ return (
       return null
     })}
   </div>
-  <div className="text-lg font-head">
+  <div className=" font-head">
     Question {currentQuestionIndex + 1} of {allQuestions.length}
   </div>
 </div>
@@ -491,38 +491,38 @@ return (
           {allQuestions.length > 0 && (
             <div className={`flex flex-col ${allQuestions[currentQuestionIndex].question_media_path ? 'lg:flex-row' : ''} gap-4`}>
               {/* Media section */}
-              {allQuestions[currentQuestionIndex].question_media_path && (
-                <div className="lg:w-1/2 flex items-center justify-center">
-                  <div className="w-full">
-                    {getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'image' ? (
-                      <img 
-                        src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
-                        alt="Question media"
-                        className="w-full max-w-xs mx-auto object-contain" 
-                        style={{ maxHeight: '200px' }}
-                      />
-                    ) : getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'video' ? (
-                      <div className="w-full max-w-xs mx-auto"> 
-                        <video 
-                          autoPlay
-                          loop
-                          muted
-                          playsInline
-                          controls
-                          className="w-full"
-                          style={{ maxHeight: '200px' }}
-                        >
-                          <source 
-                            src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
-                            type={`video/${allQuestions[currentQuestionIndex].question_media_path.split('.').pop()}`}
-                          />
-                        </video>
-                      </div>
-                    ) : null}
-                  </div>
-                </div>
-              )}
-
+            {allQuestions[currentQuestionIndex].question_media_path && (
+  <div className="lg:w-1/2 flex items-center justify-center">
+    <div className="w-full">
+      {getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'image' ? (
+        <img 
+          src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
+          alt="Question media"
+          className="w-full max-w-md mx-auto object-contain" 
+          style={{ maxHeight: '300px' }}
+        />
+      ) : getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'video' ? (
+        <div className="w-full max-w-md mx-auto"> 
+          <video 
+            autoPlay
+            loop
+            muted
+            playsInline
+            controls
+            className="w-full"
+            style={{ maxHeight: '300px' }}
+          >
+            <source 
+              src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
+              type={`video/${allQuestions[currentQuestionIndex].question_media_path.split('.').pop()}`}
+            />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      ) : null}
+    </div>
+  </div>
+)}
               {/* Question section */}
               <div className={allQuestions[currentQuestionIndex].question_media_path ? "lg:w-1/2" : "w-full"}>
                

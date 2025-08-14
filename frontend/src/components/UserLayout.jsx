@@ -30,8 +30,8 @@ const UserLayout = () => {
 
     return (
         <div className="min-h-screen bg-white relative overflow-hidden">
-            {/* Particle Background */}
-            <div className="absolute inset-0 z-0">
+            {/* Particle Background with Blur */}
+            <div className="absolute inset-0 z-0 backdrop-blur-[2px]">
                 <Particles
                     id="tsparticles"
                     init={particlesInit}
@@ -72,7 +72,7 @@ const UserLayout = () => {
                                 color: "#3b82f6", // Blue-500 from Tailwind
                                 distance: 150,
                                 enable: true,
-                                opacity: 0.5,
+                                opacity: 0.3, // Reduced opacity
                                 width: 1,
                             },
                             move: {
@@ -93,13 +93,13 @@ const UserLayout = () => {
                                 value: 40,
                             },
                             opacity: {
-                                value: 0.3,
+                                value: 0.2, // Reduced opacity
                             },
                             shape: {
                                 type: "circle",
                             },
                             size: {
-                                value: { min: 1, max: 5 },
+                                value: { min: 1, max: 3 }, // Smaller particles
                             },
                         },
                         detectRetina: true,
@@ -107,23 +107,21 @@ const UserLayout = () => {
                 />
             </div>
 
-            {/* Decorative Image */}
+            {/* Decorative Image - Also blurred */}
             <div className="absolute top-0 right-0 z-0" style={{ width: '600px', height: '600px' }}>
                 <img 
                     src={decorativeImage} 
                     alt="Decorative Element" 
-                    className="absolute right-0 top-0 h-full w-auto"
+                    className="absolute right-0 top-0 h-full w-auto opacity-50" // Reduced opacity
                 />
             </div>
 
-            {/* Content */}
+            {/* Content - Not blurred */}
             <div className="relative z-10">
                 <UserHeader />
-                {/* <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"> */}
-                    <div className="px-4 py-6 sm:px-0 text-gray-800"> {/* Slightly darker text for better readability */}
-                        <Outlet />
-                    </div>
-                {/* </main> */}
+                <div className="px-1 py-2 sm:px-0 text-gray-800">
+                    <Outlet />
+                </div>
             </div>
         </div>
     );
