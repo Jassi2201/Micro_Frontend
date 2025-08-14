@@ -60,7 +60,7 @@ const Progress = () => {
 />
       </div>
       
-      {error && <div className="mb-4 p-2 bg-gradient-to-r from-red-900 to-red-700 border border-opacity-20 border-white rounded-lg shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)]">{error}</div>}
+      {error && <div className="mb-4 p-2 bg-white border border-opacity-20 border-white rounded-lg shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)]">{error}</div>}
       
       {progress && (
         <>
@@ -68,7 +68,7 @@ const Progress = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {/* Total Assignments Card */}
            {/* Total Assignments Card - with glass effect */}
-<div className="bg-white p-4 rounded-xl  border-black border">
+<div className=" p-4 rounded-xl  border-black border">
   <div className="flex items-center justify-between">
     <div>
       <p className="font-head text-black">Total Assessments</p>
@@ -81,7 +81,7 @@ const Progress = () => {
 </div>
 
             {/* Questions Attempted Card */}
-          <div className="bg-white p-4 rounded-xl  border-black border">
+          <div className=" p-4 rounded-xl  border-black border">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-head text-black">Questions Attempted</p>
@@ -94,7 +94,7 @@ const Progress = () => {
             </div>
 
             {/* Correct Answers Card */}
-           <div className="bg-white p-4 rounded-xl  border-black border">
+           <div className=" p-4 rounded-xl  border-black border">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-head text-black">Correct Answers</p>
@@ -111,7 +111,7 @@ const Progress = () => {
             </div>
 
             {/* Mastery Level Card */}
-        <div className="bg-white p-4 rounded-xl  border-black border">
+        <div className=" p-4 rounded-xl  border-black border">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="font-head text-black">Mastery Level</p>
@@ -129,7 +129,7 @@ const Progress = () => {
           </div>
 
           {/* Categories Progress */}
-      <div className="bg-white p-6 mb-8 rounded-xl  border-black border">
+      <div className=" p-6 mb-8 rounded-xl  border-black border">
             <h2 className="text-lg sm:text-xl font-head text-black mb-4">Category-wise Progress</h2>
             
             <div className="space-y-4">
@@ -181,7 +181,7 @@ const Progress = () => {
           </div>
 
      {/* Recent Activity */}
-<div className="bg-white p-6 rounded-xl  border-black border">
+<div className=" p-6 rounded-xl  border-black border">
   <h2 className="text-lg sm:text-xl font-head text-black mb-4">Recent Activity</h2>
   
   <div className="overflow-x-auto w-full">

@@ -18,7 +18,7 @@ const UserHeader = () => {
   ];
 
   return (
-    <header className="bg-white border-b border-gray-100 shadow-sm">
+    <header className  >
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
@@ -41,8 +41,8 @@ const UserHeader = () => {
                 to={item.path}
                 className={`flex items-center px-3 py-2 rounded-md transition-all duration-200 text-sm ${
                   location.pathname === item.path
-                    ? 'bg-indigo-50 text-indigo-600 font-medium'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    ? 'bg-indigo-50 border text-indigo-600 font-medium'
+                    : 'text-black hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
                 <span className="mr-2">{item.icon}</span>

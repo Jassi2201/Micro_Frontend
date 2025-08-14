@@ -243,9 +243,9 @@ const getFileType = (filePath) => {
 
   if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>
 
-  return (
-    <div className="container mx-auto px-4 py-3"> {/* Adjusted padding */}
-      <h1 className="text-xl font-head mb-3">My Assessments</h1> {/* Adjusted margin */}
+return (
+    <div className="container mx-auto px-4 py-4">
+      <h1 className="text-xl font-head mb-4">My Assessments</h1>
       
       {error && <div className="mb-3 p-2 bg-red-100 text-red-700 rounded text-sm">{error}</div>}
 
@@ -465,119 +465,121 @@ const getFileType = (filePath) => {
           )}
            </div>
       ) : (
-        <div className="mb-3"> {/* Adjusted margin */}
-          <div className="flex justify-between items-center mb-3"> {/* Adjusted margin */}
-            <h2 className="text-lg font-semibold">{selectedAssignment.name}</h2>
-            <div className="text-sm">
-              Question {currentQuestionIndex + 1} of {allQuestions.length}
-            </div>
-          </div>
-
-{allQuestions.length > 0 && (
-  <div className={`flex flex-col ${allQuestions[currentQuestionIndex].question_media_path ? 'lg:flex-row' : ''} gap-5`}>
-    {/* Left side - Media (only show if media exists) */}
-    {allQuestions[currentQuestionIndex].question_media_path && (
-      <div className="lg:w-1/2 flex items-center justify-center">
-        <div className="w-full">
-          {getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'image' ? (
-            <img 
-              src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
-              alt="Question media"
-              className="w-full max-w-sm mx-auto object-contain" 
-              style={{ maxHeight: '250px' }}
-            />
-          ) : getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'video' ? (
-            <div className="w-full max-w-sm mx-auto"> 
-              <video 
-                autoPlay
-                loop
-                muted
-                playsInline
-                controls
-                className="w-full shadow-2xl"
-                style={{ maxHeight: '250px' }}
-              >
-                <source 
-                  src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
-                  type={`video/${allQuestions[currentQuestionIndex].question_media_path.split('.').pop()}`}
-                />
-                Your browser does not support the video tag.
-              </video>
-            </div>
-          ) : null}
-        </div>
-      </div>
-    )}
-
-    {/* Right side - Question and Options */}
-    <div className={allQuestions[currentQuestionIndex].question_media_path ? "lg:w-1/2" : "w-full"}>
-      {questionsByCategory.map(category => {
-        if (category.questions.some(q => q.id === allQuestions[currentQuestionIndex].id)) {
-          return (
-            <div key={category.category_id} className="mb-2">
-              <span className="text-xs font-bold text-blue-600">
-                Category: {category.category_name}
-              </span>
-            </div>
-          )
-        }
-        return null
-      })}
-      
- <h3 className="text-md font-head mb-3 flex items-center">
-  {allQuestions[currentQuestionIndex].question}
-  {allQuestions[currentQuestionIndex].question_answer_audio_path && (
-    <AudioButton 
-      audioUrl={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_answer_audio_path}`}
-      className="ml-2"
-    />
-  )}
-</h3>
-      
-      {allQuestions[currentQuestionIndex].long_content_file_path && (
-      <button
-  onClick={() => handleViewDocument(
-    allQuestions[currentQuestionIndex].long_content_file_path,
-    allQuestions[currentQuestionIndex].long_content_audio_path
-  )}
-  className="mb-3 flex items-center px-2.5 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-full border border-blue-200 text-xs"
-  title="View document"
->
-  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-  </svg>
-  <span className="text-xs">View Document</span>
-</button>
-      )}
-      
-      <div className="space-y-2.5 mb-3">
-        {allQuestions[currentQuestionIndex].options.map((option, index) => (
-          <div 
-            key={index} 
-            className={`p-2.5 border font-body rounded cursor-pointer text-sm ${
-              userAnswers[allQuestions[currentQuestionIndex].id] === index 
-                ? 'bg-blue-100 border-blue-500' 
-                : 'hover:bg-gray-50'
-            }`}
-            onClick={() => handleAnswerSelect(allQuestions[currentQuestionIndex].id, index)}
+        <div className="mb-4">
+    <div className="flex justify-between items-center mb-5">
+  <h2 className="text-lg font-head">{selectedAssignment.name}</h2>
+  <div className="absolute left-1/2 transform -translate-x-1/2">
+    {questionsByCategory.map(category => {
+      if (category.questions.some(q => q.id === allQuestions[currentQuestionIndex].id)) {
+        return (
+          <span 
+            key={category.category_id} 
+            className="text-lg font-head text-black "
           >
-            {option}
-          </div>
-        ))}
-      </div>
-    </div>
+           Category: {category.category_name}
+          </span>
+        )
+      }
+      return null
+    })}
   </div>
-)}
+  <div className="text-lg font-head">
+    Question {currentQuestionIndex + 1} of {allQuestions.length}
+  </div>
+</div>
 
-          {/* Navigation buttons - adjusted spacing */}
-          <div className="flex justify-between mt-3"> {/* Adjusted margin */}
+          {allQuestions.length > 0 && (
+            <div className={`flex flex-col ${allQuestions[currentQuestionIndex].question_media_path ? 'lg:flex-row' : ''} gap-4`}>
+              {/* Media section */}
+              {allQuestions[currentQuestionIndex].question_media_path && (
+                <div className="lg:w-1/2 flex items-center justify-center">
+                  <div className="w-full">
+                    {getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'image' ? (
+                      <img 
+                        src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
+                        alt="Question media"
+                        className="w-full max-w-xs mx-auto object-contain" 
+                        style={{ maxHeight: '200px' }}
+                      />
+                    ) : getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'video' ? (
+                      <div className="w-full max-w-xs mx-auto"> 
+                        <video 
+                          autoPlay
+                          loop
+                          muted
+                          playsInline
+                          controls
+                          className="w-full"
+                          style={{ maxHeight: '200px' }}
+                        >
+                          <source 
+                            src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
+                            type={`video/${allQuestions[currentQuestionIndex].question_media_path.split('.').pop()}`}
+                          />
+                        </video>
+                      </div>
+                    ) : null}
+                  </div>
+                </div>
+              )}
+
+              {/* Question section */}
+              <div className={allQuestions[currentQuestionIndex].question_media_path ? "lg:w-1/2" : "w-full"}>
+               
+                
+                <h3 className="text-base font-head mb-3 flex items-center">
+                  {allQuestions[currentQuestionIndex].question}
+                  {allQuestions[currentQuestionIndex].question_answer_audio_path && (
+                    <AudioButton 
+                      audioUrl={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_answer_audio_path}`}
+                      className="ml-2"
+                    />
+                  )}
+                </h3>
+                
+                {allQuestions[currentQuestionIndex].long_content_file_path && (
+                  <button
+                    onClick={() => handleViewDocument(
+                      allQuestions[currentQuestionIndex].long_content_file_path,
+                      allQuestions[currentQuestionIndex].long_content_audio_path
+                    )}
+                    className="mb-3 flex items-center px-2.5 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded border border-blue-200 text-xs"
+                  >
+                    <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                    </svg>
+                    View Document
+                  </button>
+                )}
+                
+                <div className="space-y-2 mb-4">
+                  {allQuestions[currentQuestionIndex].options.map((option, index) => (
+                    <div 
+                      key={index} 
+                      className={`p-3 border font-body rounded-md cursor-pointer text-sm ${
+                        userAnswers[allQuestions[currentQuestionIndex].id] === index 
+                          ? 'bg-blue-100 border-blue-500' 
+                          : 'border-black hover:bg-blue-100'
+                      }`}
+                      onClick={() => handleAnswerSelect(allQuestions[currentQuestionIndex].id, index)}
+                    >
+                      {option}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Navigation buttons */}
+          <div className="flex justify-between mt-4">
             <button
               onClick={handlePrevQuestion}
               disabled={currentQuestionIndex === 0}
-              className={`px-3.5 py-1.5 rounded text-sm ${ /* Adjusted padding */
+              className={`px-3 py-1.5 rounded text-sm ${
                 currentQuestionIndex === 0 
-                  ? 'bg-gray-300 cursor-not-allowed' 
-                  : 'bg-gray-600 text-white hover:bg-gray-700'
+                  ? 'bg-gray-300  cursor-not-allowed' 
+                  : 'bg-gray-600  text-white hover:bg-gray-700'
               }`}
             >
               Previous
@@ -587,7 +589,7 @@ const getFileType = (filePath) => {
               <button
                 onClick={handleNextQuestion}
                 disabled={userAnswers[allQuestions[currentQuestionIndex].id] === undefined}
-                className={`px-3.5 py-1.5 rounded text-sm ${ /* Adjusted padding */
+                className={`px-3 py-1.5 rounded text-sm ${
                   userAnswers[allQuestions[currentQuestionIndex].id] === undefined
                     ? 'bg-gray-300 cursor-not-allowed'
                     : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -599,13 +601,13 @@ const getFileType = (filePath) => {
               <button
                 onClick={handleSubmit}
                 disabled={Object.keys(userAnswers).length !== allQuestions.length}
-                className={`px-3.5 py-1.5 rounded text-sm ${ /* Adjusted padding */
+                className={`px-3 py-1.5 rounded text-sm ${
                   Object.keys(userAnswers).length !== allQuestions.length
                     ? 'bg-gray-300 cursor-not-allowed'
                     : 'bg-green-600 text-white hover:bg-green-700'
                 }`}
               >
-                Submit Assignment
+                Submit
               </button>
             )}
           </div>
@@ -622,12 +624,12 @@ const getFileType = (filePath) => {
         </div>
       )}
 
-     <DocumentPopup
-  isOpen={showDocumentPopup}
-  onClose={() => setShowDocumentPopup(false)}
-  documentPath={currentDocumentPath}
-  audioPath={currentDocumentAudioPath}
-/>
+      <DocumentPopup
+        isOpen={showDocumentPopup}
+        onClose={() => setShowDocumentPopup(false)}
+        documentPath={currentDocumentPath}
+        audioPath={currentDocumentAudioPath}
+      />
     </div>
   )
 }
