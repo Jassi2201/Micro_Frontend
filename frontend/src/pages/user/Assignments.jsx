@@ -23,6 +23,7 @@ const Assignments = () => {
   const [currentAnswerText, setCurrentAnswerText] = useState('')
   const [showDocumentPopup, setShowDocumentPopup] = useState(false)
   const [currentDocumentPath, setCurrentDocumentPath] = useState('')
+  const [currentDocumentAudioPath, setCurrentDocumentAudioPath] = useState('');
 
   const allQuestions = questionsByCategory.reduce((acc, category) => {
     return [...acc, ...category.questions]
@@ -156,10 +157,11 @@ const Assignments = () => {
     setShowConfidencePopup(false)
   }
 
-  const handleViewDocument = (documentPath) => {
-    setCurrentDocumentPath(documentPath)
-    setShowDocumentPopup(true)
-  }
+ const handleViewDocument = (documentPath, audioPath) => {
+  setCurrentDocumentPath(documentPath);
+  setCurrentDocumentAudioPath(audioPath); // You'll need to add this state
+  setShowDocumentPopup(true);
+}
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < allQuestions.length - 1) {
@@ -522,21 +524,30 @@ const getFileType = (filePath) => {
         return null
       })}
       
-     <h3 className="text-md font-head mb-3">
+ <h3 className="text-md font-head mb-3 flex items-center">
   {allQuestions[currentQuestionIndex].question}
+  {allQuestions[currentQuestionIndex].question_answer_audio_path && (
+    <AudioButton 
+      audioUrl={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_answer_audio_path}`}
+      className="ml-2"
+    />
+  )}
 </h3>
       
       {allQuestions[currentQuestionIndex].long_content_file_path && (
-        <button
-          onClick={() => handleViewDocument(allQuestions[currentQuestionIndex].long_content_file_path)}
-          className="mb-3 flex items-center px-2.5 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-full border border-blue-200 text-xs"
-          title="View document"
-        >
-          <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-          </svg>
-          <span className="text-xs">View Document</span>
-        </button>
+      <button
+  onClick={() => handleViewDocument(
+    allQuestions[currentQuestionIndex].long_content_file_path,
+    allQuestions[currentQuestionIndex].long_content_audio_path
+  )}
+  className="mb-3 flex items-center px-2.5 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-full border border-blue-200 text-xs"
+  title="View document"
+>
+  <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+  </svg>
+  <span className="text-xs">View Document</span>
+</button>
       )}
       
       <div className="space-y-2.5 mb-3">
@@ -611,11 +622,12 @@ const getFileType = (filePath) => {
         </div>
       )}
 
-      <DocumentPopup
-        isOpen={showDocumentPopup}
-        onClose={() => setShowDocumentPopup(false)}
-        documentPath={currentDocumentPath}
-      />
+     <DocumentPopup
+  isOpen={showDocumentPopup}
+  onClose={() => setShowDocumentPopup(false)}
+  documentPath={currentDocumentPath}
+  audioPath={currentDocumentAudioPath}
+/>
     </div>
   )
 }
