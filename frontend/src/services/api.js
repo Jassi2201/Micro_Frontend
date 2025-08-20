@@ -90,7 +90,28 @@ return this.request('/getAllRegularUsers', 'GET', null, true);
   },
   getAssignmentResults(userId, assignmentId) {
     return this.request(`/${userId}/assignments/${assignmentId}/results`, 'GET');
+  },
+  // Add these methods to your api object in api.js
+
+// Admin APIs for Tutorial Videos
+uploadTutorialVideo(formData) {
+  return this.request('/tutorial-video', 'POST', formData, true, true);
+},
+getAllTutorialVideos() {
+  return this.request('/tutorial-videos', 'GET', null, true);
+},
+ // Flipkart Content APIs
+  addFlipkartContent(formData) {
+    return this.request('/flipkart-content', 'POST', formData, true, true);
+  },
+  getAllFlipkartContent() {
+    return this.request('/flipkart-content', 'GET', null, true);
+  },
+   // NEW: Get only Flipkart images with IDs
+  getFlipkartImagesOnly() {
+    return this.request('/flipkart-content/images-only', 'GET', null, true);
   }
+
 };
 
 export default api;

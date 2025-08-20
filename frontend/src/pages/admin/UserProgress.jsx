@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import AdminSidebar from '../../components/AdminSidebar'
 import api from '../../services/api'
 import { FiBook, FiCheckCircle, FiXCircle, FiBarChart2, FiClock, FiAward } from 'react-icons/fi'
 

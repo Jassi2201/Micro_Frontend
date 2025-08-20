@@ -24,6 +24,9 @@ import UserProgress from './pages/user/Progress'
 // Layout Components
 import AdminLayout from './components/AdminLayout'
 import UserLayout from './components/UserLayout'
+import TutorialVideos from './pages/admin/TutorialVideos';
+import FlipkartContent from './pages/admin/FlipkartContent';
+
 
 function App() {
   return (
@@ -43,6 +46,16 @@ function App() {
           <Route path="/admin/categories" element={
             <ProtectedRoute isAdmin={true}>
               <AdminCategories />
+            </ProtectedRoute>
+          } />
+            <Route path="/admin/tutorial" element={
+            <ProtectedRoute isAdmin={true}>
+              <TutorialVideos />
+            </ProtectedRoute>
+          } />
+           <Route path="/admin/flipkart" element={
+            <ProtectedRoute isAdmin={true}>
+              <FlipkartContent />
             </ProtectedRoute>
           } />
           <Route path="/admin/questions" element={
