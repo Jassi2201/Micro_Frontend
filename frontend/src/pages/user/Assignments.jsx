@@ -3,9 +3,6 @@ import api from '../../services/api'
 import { useAuth } from '../../services/auth'
 import ConfidencePopup from '../../components/ConfidencePopup'
 import DocumentPopup from '../../components/DocumentPopup'
-import {FaCheck,FaTimes} from 'react-icons/fa'
-import "./Assignment.css"
-import { FiDownload, FiAlertCircle } from 'react-icons/fi';
 import AudioButton from '../../components/AudioButton'
 import { FILE_BASE_URL } from '../../services/api'; // Import the base URL from api.js
 
@@ -26,8 +23,8 @@ const Assignments = () => {
   const [currentAnswerText, setCurrentAnswerText] = useState('')
   const [showDocumentPopup, setShowDocumentPopup] = useState(false)
   const [currentDocumentPath, setCurrentDocumentPath] = useState('')
+  const [currentDocumentAudioPath, setCurrentDocumentAudioPath] = useState('');
 
-  // Flatten all questions into a single array for navigation
   const allQuestions = questionsByCategory.reduce((acc, category) => {
     return [...acc, ...category.questions]
   }, [])
@@ -36,7 +33,6 @@ const Assignments = () => {
     const fetchAssignments = async () => {
       try {
         const data = await api.getUserAssignmentCompletionDetails(user.id)
-        // Separate completed and not completed assignments
         const completed = []
         const notCompleted = []
         
@@ -69,7 +65,6 @@ const Assignments = () => {
       const data = await api.getAssignmentQuestions(user.id, assignmentId)
       const assignment = [...assignments, ...completedAssignments].find(a => a.id === assignmentId)
       
-      // Process the new response format with categories
       const parsedCategories = data.questions.map(category => ({
         ...category,
         questions: category.questions.map(question => {
@@ -84,7 +79,7 @@ const Assignments = () => {
             console.error('Failed to parse options for question:', question.id, e)
             return {
               ...question,
-              options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'] // fallback
+              options: ['Option 1', 'Option 2', 'Option 3', 'Option 4']
             }
           }
         })
@@ -111,7 +106,6 @@ const Assignments = () => {
       const data = await api.getAssignmentResults(user.id, assignmentId)
       const assignment = completedAssignments.find(a => a.id === assignmentId)
       
-      // Safely parse options for each response
       const parsedResults = {
         ...data.assignment,
         responses: data.assignment.responses.map(response => {
@@ -126,7 +120,7 @@ const Assignments = () => {
             console.error('Failed to parse options for response:', response.questionId, e)
             return {
               ...response,
-              options: ['Option 1', 'Option 2', 'Option 3', 'Option 4'] // fallback
+              options: ['Option 1', 'Option 2', 'Option 3', 'Option 4']
             }
           }
         })
@@ -151,10 +145,7 @@ const Assignments = () => {
       [questionId]: answerIndex
     }))
     
-    // Set the current answer text for the popup
     setCurrentAnswerText(selectedOption)
-    
-    // Show the confidence popup
     setShowConfidencePopup(true)
   }
 
@@ -166,10 +157,11 @@ const Assignments = () => {
     setShowConfidencePopup(false)
   }
 
-  const handleViewDocument = (documentPath) => {
-    setCurrentDocumentPath(documentPath)
-    setShowDocumentPopup(true)
-  }
+ const handleViewDocument = (documentPath, audioPath) => {
+  setCurrentDocumentPath(documentPath);
+  setCurrentDocumentAudioPath(audioPath); // You'll need to add this state
+  setShowDocumentPopup(true);
+}
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < allQuestions.length - 1) {
@@ -188,22 +180,19 @@ const Assignments = () => {
       setLoading(true)
       setError('')
       
-      // Prepare responses for submission - use the actual option text instead of index
       const responses = Object.entries(userAnswers).map(([questionId, answerIndex]) => {
         const question = allQuestions.find(q => q.id === parseInt(questionId))
         const selectedOption = question.options[answerIndex]
         
         return {
           questionId: parseInt(questionId),
-          answer: selectedOption,  // Send the actual option text
+          answer: selectedOption,
           isSure: userConfidence[questionId] || false
         }
       })
       
-      // Submit all responses at once
       const submissionResponse = await api.submitAssignment(user.id, selectedAssignment.id, responses)
       
-      // Update the results state with the response data
       setResults({
         ...submissionResponse,
         responses: submissionResponse.results.map(result => ({
@@ -225,7 +214,6 @@ const Assignments = () => {
       
       setSubmitted(true)
       
-      // Update assignments list
       const updatedAssignments = assignments.filter(a => a.id !== selectedAssignment.id)
       setAssignments(updatedAssignments)
       setCompletedAssignments(prev => [...prev, {...selectedAssignment, isCompleted: true}])
@@ -242,25 +230,24 @@ const Assignments = () => {
     setResults(null)
   }
 
-  // Helper function to determine file type
-  const getFileType = (filePath) => {
-    if (!filePath) return null;
-    const extension = filePath.split('.').pop().toLowerCase();
-    if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
-      return 'image';
-    } else if (['mp4', 'webm', 'ogg'].includes(extension)) {
-      return 'video';
-    }
-    return null;
+const getFileType = (filePath) => {
+  if (!filePath) return null;
+  const extension = filePath.split('.').pop().toLowerCase();
+  if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+    return 'image';
+  } else if (['mp4', 'webm', 'ogg'].includes(extension)) {
+    return 'video';
   }
+  return null;
+}
 
   if (loading) return <div className="flex justify-center items-center h-screen">Loading...</div>
 
-  return (
-  <div className="container mx-auto px-4 pb-8 -mt-4">  {/* Negative margin pulls content up */}
-  <h1 className="text-2xl font-head mb-4">My Assessments</h1>  {/* Reduce heading margin */}
+return (
+    <div className="container mx-auto px-4 py-4">
+      <h1 className="text-xl font-head mb-4">My Assessments</h1>
       
-      {error && <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">{error}</div>}
+      {error && <div className="mb-3 p-2 bg-red-100 text-red-700 rounded text-sm">{error}</div>}
 
       {!selectedAssignment ? (
         <div>
@@ -270,12 +257,12 @@ const Assignments = () => {
           ) : (
             <div className="grid gap-6 font-head md:grid-cols-2 lg:grid-cols-3 mb-8">
               {assignments.map((assignment) => (
-                <div key={assignment.id} className="rounded-xl border border-opacity-20 border-white p-6 shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10">
+                <div key={assignment.id} className="bg-white rounded-lg shadow p-6 border">
                   <h3 className="text-lg font-semibold mb-2">{assignment.name}</h3>
-                  <p className="text-white mb-4">Created: {new Date(assignment.createdAt).toLocaleDateString()}</p>
+                  <p className="text-gray-600 mb-4">Created: {new Date(assignment.createdAt).toLocaleDateString()}</p>
                   <button 
                     onClick={() => startAssignment(assignment.id)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+                    className="bg-blue-600 text-white  px-4 py-2 rounded hover:bg-blue-700"
                   >
                     Start Assessment
                   </button>
@@ -290,9 +277,9 @@ const Assignments = () => {
           ) : (
             <div className="grid font-body gap-6 md:grid-cols-2 lg:grid-cols-3">
               {completedAssignments.map((assignment) => (
-                <div key={assignment.id} className="rounded-xl border border-opacity-20 border-white p-6 shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10">
+                <div key={assignment.id} className="bg-white rounded-lg shadow p-6 border">
                   <h3 className="text-lg font-semibold mb-2">{assignment.name}</h3>
-                  <p className="text-white mb-2">Completed: {new Date(assignment.completedAt).toLocaleDateString()}</p>
+                  <p className="text-gray-600 mb-2">Completed: {new Date(assignment.completedAt).toLocaleDateString()}</p>
                   <div className="mb-4">
                     <p className="text-sm">Mastery: {assignment.stats.masteryPercentage}%</p>
                     <p className="text-sm">{assignment.stats.masteredQuestions}/{assignment.stats.totalQuestions} questions mastered</p>
@@ -308,13 +295,13 @@ const Assignments = () => {
             </div>
           )}
         </div>
-      ) : submitted ? (
-        <div className=" font-body rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold">{selectedAssignment.name} - Results</h2>
+  ) : submitted ? (
+        <div className="bg-white font-body rounded-lg shadow p-4"> {/* Adjusted padding */}
+          <div className="flex justify-between items-center mb-3"> {/* Adjusted margin */}
+            <h2 className="text-xl font-bold">{selectedAssignment.name} - Results</h2>
             <button
               onClick={handleBackToAssignments}
-              className=" border border-opacity-20 border-white text-white px-4 py-2 rounded shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10"
+              className="bg-gray-600 text-white px-3 py-1.5 rounded text-sm" /* Adjusted padding */
             >
               Back to Assessments
             </button>
@@ -322,7 +309,7 @@ const Assignments = () => {
           
           {results ? (
             <div>
-              <div className="mb-6 p-4  rounded">
+              <div className="mb-6 p-4 bg-gray-50 rounded">
                 <h3 className="text-lg font-semibold mb-2">Summary</h3>
                 <p>Completed on: {new Date(results.completedAt).toLocaleString()}</p>
                 <p>Total Questions: {results.responses.length}</p>
@@ -334,147 +321,141 @@ const Assignments = () => {
               </div>
               
               <div className="space-y-6">
-              {results.responses.map((response, index) => {
-  // Determine status display properties
-  const statusDisplay = {
-    'sure_correct': {
-      text: 'Sure & Correct',
-      color: 'text-green-800',
-      bg: 'bg-green-100',
-      border: 'border-green-200',
-      icon: (
-        <FaCheck className="w-4 h-4 text-white"/>
-      )
-    },
-    'not_sure_correct': {
-      text: 'Not Sure & Correct',
-      color: 'text-blue-800',
-      bg: 'bg-blue-100',
-      border: 'border-blue-200',
-       icon: <FaCheck className="w-4 h-4 text-white" />
-    },
-    'not_sure_incorrect': {
-      text: 'Not Sure & Incorrect',
-      color: 'text-yellow-800',
-      bg: 'bg-yellow-100',
-      border: 'border-yellow-200',
-     
-     icon: <FaTimes className="w-4 h-4 text-white" />
-    },
-    'sure_incorrect': {
-      text: 'Sure & Incorrect',
-      color: 'text-red-800',
-      bg: 'bg-red-100',
-      border: 'border-red-200',
-       icon: <FaTimes className="w-4 h-4 text-white" />
-    }
-  }[response.status] || {
-    text: response.status.replace(/_/g, ' '),
-    color: 'text-gray-800',
-    bg: 'bg-gray-100',
-    border: 'border-gray-200',
-    icon: null
-  };
+                {results.responses.map((response, index) => {
+                  const statusDisplay = {
+                    'sure_correct': {
+                      text: 'Sure & Correct',
+                      color: 'text-green-800',
+                      bg: 'bg-green-100',
+                      border: 'border-green-200',
+                      icon: (
+                        <svg className="w-4 h-4 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )
+                    },
+                    'not_sure_correct': {
+                      text: 'Not Sure & Correct',
+                      color: 'text-blue-800',
+                      bg: 'bg-blue-100',
+                      border: 'border-blue-200',
+                      icon: (
+                        <svg className="w-4 h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                        </svg>
+                      )
+                    },
+                    'not_sure_incorrect': {
+                      text: 'Not Sure & Incorrect',
+                      color: 'text-yellow-800',
+                      bg: 'bg-yellow-100',
+                      border: 'border-yellow-200',
+                      icon: (
+                        <svg className="w-4 h-4 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      )
+                    },
+                    'sure_incorrect': {
+                      text: 'Sure & Incorrect',
+                      color: 'text-red-800',
+                      bg: 'bg-red-100',
+                      border: 'border-red-200',
+                      icon: (
+                        <svg className="w-4 h-4 text-red-600" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                        </svg>
+                      )
+                    }
+                  }[response.status] || {
+                    text: response.status.replace(/_/g, ' '),
+                    color: 'text-gray-800',
+                    bg: 'bg-gray-100',
+                    border: 'border-gray-200',
+                    icon: null
+                  };
 
-  // Determine feedback message based on status
-  let statusMessage = '';
-  
-  switch(response.status) {
-    case 'sure_correct':
-      statusMessage = 'The answer is correct!\n\nGreat job — you\'ve mastered this question like a pro!';
-      break;
-    case 'not_sure_correct':
-      statusMessage = 'Correct answer — but not sure.\n\nCheck the quick summary below to refresh your understanding!';
-      break;
-    case 'not_sure_incorrect':
-      statusMessage = 'Incorrect answer — and unsure about it.\n\nGo through the attached document to strengthen your understanding!';
-      break;
-    case 'sure_incorrect':
-      statusMessage = 'Incorrect answer — but you seemed confident.\n\nCheck the attached document to clear up the concept!';
-      break;
-    default:
-      statusMessage = '';
-  }
+                  let statusMessage = '';
+                  
+                  switch(response.status) {
+                    case 'sure_correct':
+                      statusMessage = 'The answer is correct!\n\nGreat job — you\'ve mastered this question like a pro!';
+                      break;
+                    case 'not_sure_correct':
+                      statusMessage = 'Correct answer — but not sure.\n\nCheck the quick summary below to refresh your understanding!';
+                      break;
+                    case 'not_sure_incorrect':
+                      statusMessage = 'Incorrect answer — and unsure about it.\n\nGo through the attached document to strengthen your understanding!';
+                      break;
+                    case 'sure_incorrect':
+                      statusMessage = 'Incorrect answer — but you seemed confident.\n\nCheck the attached document to clear up the concept!';
+                      break;
+                    default:
+                      statusMessage = '';
+                  }
 
-  return (
-<div 
-  key={index} 
-  className={`status-card p-6 rounded-lg mb-6 
-    backdrop-blur-sm bg-opacity-20 shadow-lg
-    border border-opacity-30
-    transition-all duration-300
-    hover:bg-opacity-30 hover:shadow-md`}
-  style={{
-    '--neon-clr': statusDisplay.color === 'text-green-800' ? '#10b981' :
-                 statusDisplay.color === 'text-blue-800' ? '#3b82f6' :
-                 statusDisplay.color === 'text-yellow-800' ? '#f59e0b' :
-                 statusDisplay.color === 'text-red-800' ? '#ef4444' : '#6b7280',
-    backgroundColor: statusDisplay.color === 'text-green-800' ? 'rgba(16, 185, 129, 0.1)' :
-                    statusDisplay.color === 'text-blue-800' ? 'rgba(59, 130, 246, 0.1)' :
-                    statusDisplay.color === 'text-yellow-800' ? 'rgba(245, 158, 11, 0.1)' :
-                    statusDisplay.color === 'text-red-800' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(107, 114, 128, 0.1)',
-    borderColor: statusDisplay.color === 'text-green-800' ? 'rgba(16, 185, 129, 0.3)' :
-                statusDisplay.color === 'text-blue-800' ? 'rgba(59, 130, 246, 0.3)' :
-                statusDisplay.color === 'text-yellow-800' ? 'rgba(245, 158, 11, 0.3)' :
-                statusDisplay.color === 'text-red-800' ? 'rgba(239, 68, 68, 0.3)' : 'rgba(107, 114, 128, 0.3)'
-  }}
->
-      <div className="flex items-center mb-4">
-        <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${statusDisplay.color.replace('text-', 'bg-')} bg-opacity-20`}>
-          {statusDisplay.icon}
-        </div>
-        <div className="ml-3">
-          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold text-white`}>
-            {statusDisplay.text}
-          </span>
-        </div>
-      </div>
-      
-      <div className="pl-11 text-white">
-        <h4 className="font-medium text-lg mb-2">Question {index + 1}: {response.question}</h4>
-        
-        <div className="mb-4">
-          <p className="text-sm">Your answer: <span className="font-medium">{response.userAnswer}</span></p>
-          <p className="text-sm">Correct answer: <span className="font-medium">{response.correctAnswer}</span></p>
-        </div>
-        
-        {/* Status message */}
-        {statusMessage && (
-          <p className="text-sm mb-4 whitespace-pre-line">{statusMessage}</p>
-        )}
-        
- 
-{response.feedback?.short && (
+                  return (
+                    <div key={index} className="p-4 rounded border border-gray-200">
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium">Question {index + 1}: {response.question}</h4>
+                      </div>
+                      
+                      <div className="mb-4">
+                        <p className="text-sm text-gray-600">Your answer: <span className="font-medium">{response.userAnswer}</span></p>
+                        <p className="text-sm text-gray-600">Correct answer: <span className="font-medium">{response.correctAnswer}</span></p>
+                      </div>
+                      
+                      <div className={`p-4 rounded-lg ${statusDisplay.bg} ${statusDisplay.border}`}>
+                        <div className="flex items-center mb-3">
+                          <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${statusDisplay.color.replace('text-', 'bg-')} bg-opacity-20`}>
+                            {statusDisplay.icon}
+                          </div>
+                          <div className="ml-3">
+                            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${statusDisplay.color} ${statusDisplay.bg}`}>
+                              {statusDisplay.text}
+                            </span>
+                          </div>
+                        </div>
+                        
+                        <div className="pl-11">
+                          {statusMessage && (
+                            <p className="text-sm mb-4 whitespace-pre-line">{statusMessage}</p>
+                          )}
+                          
+                          {response.feedback?.short && (
   <div className="mb-4 bg-white/60 backdrop-blur-md p-4 rounded-lg border border-white/20 shadow-sm">
     <h6 className="text-sm font-semibold mb-1 text-black">Quick Summary</h6>
     <p className="text-sm whitespace-pre-line text-black">{response.feedback.short}</p>
   </div>
 )}
-        
-        {/* Detailed explanation */}
-   {response.feedback?.long?.text && (
+                          
+                      {response.feedback?.long?.text && (
   <div className="mb-4">
     <h6 className="text-sm font-semibold mb-1">Detailed Explanation</h6>
     <p className="text-sm">{response.feedback.long.text}</p>
   </div>
 )}
-        
-        {/* Resources */}
-       {response.feedback.long.filePath && (
-  <div className="mt-4">
-    <button
-      onClick={() => window.open(`${FILE_BASE_URL}${response.feedback.long.filePath}`, '_blank')}
-      className="flex items-center px-4 py-2 rounded-lg border border-white/20 bg-white/10 hover:bg-white/20 transition-all duration-300 text-white"
-    >
-      <FiDownload className="mr-2" />
-      <span>Additional Resources</span>
-    </button>
-  </div>
-)}
-      </div>
-    </div>
-  );
-})}
+                          
+                          {response.feedback.long.filePath && (
+                            <div className="mt-4 flex items-center space-x-4">
+                              <a 
+                                href={`${FILE_BASE_URL}${response.feedback.long.filePath}`}
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-3 py-1.5 border border-gray-300 rounded-md shadow-sm text-xs font-medium text-gray-700 bg-white hover:bg-gray-50"
+                              >
+                                <svg className="-ml-0.5 mr-1.5 h-3 w-3 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clipRule="evenodd" />
+                                </svg>
+                                Download Additional Resources
+                              </a>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           ) : (
@@ -482,93 +463,103 @@ const Assignments = () => {
               <p>Loading results...</p>
             </div>
           )}
-        </div>
+           </div>
       ) : (
-        <div className=" font-head rounded-lg shadow p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-head">{selectedAssignment.name}</h2>
-            <div className='font-head text-xl'>
-              Question {currentQuestionIndex + 1} of {allQuestions.length}
-            </div>
-          </div>
-
-          {allQuestions.length > 0 && (
-            <div>
-              {/* Display current category */}
-              {questionsByCategory.map(category => {
-                if (category.questions.some(q => q.id === allQuestions[currentQuestionIndex].id)) {
-                  return (
-                    <div key={category.category_id} className="mb-2">
-                      <span className="text-xl font-head text-[#3b82f6]">
-                        Category: {category.category_name}
-                      </span>
-                    </div>
-                  )
-                }
-                return null
-              })}
-              
-              <div className="mb-6">
-                {/* Display question media (image or video) if available */}
-                {allQuestions[currentQuestionIndex].question_media_path && (
-                  <div className="mb-4">
-                    {getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'image' ? (
-                      <img 
-                        src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
-                        alt="Question media"
-                        className="w-full h-64 object-contain mx-auto"
-                      />
-                    ) : getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'video' ? (
-                      <video 
-                        autoPlay
-                        loop
-                        muted
-                        playsInline
-                        className="w-full h-64 object-contain mx-auto"
-                      >
-                        <source 
-                          src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
-                          type={`video/${allQuestions[currentQuestionIndex].question_media_path.split('.').pop()}`}
-                        />
-                        Your browser does not support the video tag.
-                      </video>
-                    ) : null}
-                  </div>
-                )}
-                
-           <div className="flex justify-between items-start">
-  <h3 className="text-2xl font-head mb-4 flex-1">
-    {allQuestions[currentQuestionIndex].question}
-  </h3>
-  <div className="flex items-center">
-    {allQuestions[currentQuestionIndex].long_content_file_path && (
-      <button
-        onClick={() => handleViewDocument(allQuestions[currentQuestionIndex].long_content_file_path)}
-        className="ml-2 flex items-center px-3 py-1 text-white/80 hover:text-white rounded-full border border-white/20 hover:border-white/40 transition-all duration-300"
-        title="View document"
-      >
-        <FiAlertCircle className="w-4 h-4 mr-1 text-[#3b82f6]" />
-        <span className="text-sm">View Document</span>
-      </button>
-    )}
-    {/* Add the AudioButton here */}
-    <AudioButton 
-      texts={[
-        allQuestions[currentQuestionIndex].question,
-        `Options are: ${allQuestions[currentQuestionIndex].options.join(', ')}`
-      ]}
-    />
+        <div className="mb-4">
+    <div className="flex justify-between items-center mb-5">
+  <h2 className="text-lg font-head">{selectedAssignment.name}</h2>
+  <div className="absolute left-1/2 transform -translate-x-1/2">
+    {questionsByCategory.map(category => {
+      if (category.questions.some(q => q.id === allQuestions[currentQuestionIndex].id)) {
+        return (
+          <span 
+            key={category.category_id} 
+            className="text-lg font-head text-black "
+          >
+           Category: {category.category_name}
+          </span>
+        )
+      }
+      return null
+    })}
+  </div>
+  <div className=" font-head">
+    Question {currentQuestionIndex + 1} of {allQuestions.length}
   </div>
 </div>
+
+          {allQuestions.length > 0 && (
+            <div className={`flex flex-col ${allQuestions[currentQuestionIndex].question_media_path ? 'lg:flex-row' : ''} gap-4`}>
+              {/* Media section */}
+            {allQuestions[currentQuestionIndex].question_media_path && (
+  <div className="lg:w-1/2 flex items-center justify-center">
+    <div className="w-full">
+      {getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'image' ? (
+        <img 
+          src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
+          alt="Question media"
+          className="w-full max-w-md mx-auto object-contain" 
+          style={{ maxHeight: '300px' }}
+        />
+      ) : getFileType(allQuestions[currentQuestionIndex].question_media_path) === 'video' ? (
+        <div className="w-full max-w-md mx-auto"> 
+          <video 
+            autoPlay
+            loop
+            muted
+            playsInline
+            controls
+            className="w-full"
+            style={{ maxHeight: '300px' }}
+          >
+            <source 
+              src={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_media_path}`}
+              type={`video/${allQuestions[currentQuestionIndex].question_media_path.split('.').pop()}`}
+            />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      ) : null}
+    </div>
+  </div>
+)}
+              {/* Question section */}
+              <div className={allQuestions[currentQuestionIndex].question_media_path ? "lg:w-1/2" : "w-full"}>
+               
                 
-                <div className="space-y-3 mb-6">
+                <h3 className="text-base font-head mb-3 flex items-center">
+                  {allQuestions[currentQuestionIndex].question}
+                  {allQuestions[currentQuestionIndex].question_answer_audio_path && (
+                    <AudioButton 
+                      audioUrl={`${FILE_BASE_URL}${allQuestions[currentQuestionIndex].question_answer_audio_path}`}
+                      className="ml-2"
+                    />
+                  )}
+                </h3>
+                
+                {allQuestions[currentQuestionIndex].long_content_file_path && (
+                  <button
+                    onClick={() => handleViewDocument(
+                      allQuestions[currentQuestionIndex].long_content_file_path,
+                      allQuestions[currentQuestionIndex].long_content_audio_path
+                    )}
+                    className="mb-3 flex items-center px-2.5 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded border border-blue-200 text-xs"
+                  >
+                    <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
+                    </svg>
+                    View Document
+                  </button>
+                )}
+                
+                <div className="space-y-2 mb-4">
                   {allQuestions[currentQuestionIndex].options.map((option, index) => (
                     <div 
                       key={index} 
-                      className={`p-3 border font-body rounded cursor-pointer ${
+                      className={`p-3 border font-body rounded-md cursor-pointer text-sm ${
                         userAnswers[allQuestions[currentQuestionIndex].id] === index 
-                          ? 'bg-[#3b82f6] border-white' 
-                          : 'hover:bg-[#3b82f6]'
+                          ? 'bg-blue-100 border-blue-500' 
+                          : 'border-black hover:bg-blue-100'
                       }`}
                       onClick={() => handleAnswerSelect(allQuestions[currentQuestionIndex].id, index)}
                     >
@@ -576,67 +567,68 @@ const Assignments = () => {
                     </div>
                   ))}
                 </div>
-                
-                {showConfidencePopup && (
-                  <ConfidencePopup
-                    isOpen={showConfidencePopup}
-                    onClose={() => setShowConfidencePopup(false)}
-                    onConfidenceSelect={handleConfidenceSelect}
-                    questionId={allQuestions[currentQuestionIndex]?.id}
-                    currentAnswer={currentAnswerText}
-                  />
-                )}
-              </div>
-
-              <div className="flex justify-between">
-                <button
-                  onClick={handlePrevQuestion}
-                  disabled={currentQuestionIndex === 0}
-                  className={`px-4 py-2 rounded ${
-                    currentQuestionIndex === 0 
-                      ? '  border border-opacity-20 border-white cursor-not-allowed' 
-                      : 'bg-[#3b82f6] text-white '
-                  }`}
-                >
-                  Previous
-                </button>
-                
-                {currentQuestionIndex < allQuestions.length - 1 ? (
-                  <button
-                    onClick={handleNextQuestion}
-                    disabled={userAnswers[allQuestions[currentQuestionIndex].id] === undefined}
-                    className={`px-4 py-2 rounded ${
-                      userAnswers[allQuestions[currentQuestionIndex].id] === undefined
-                        ? 'p-4  border border-opacity-20 border-white cursor-not-allowed'
-                        : 'bg-[#3b82f6] text-white '
-                    }`}
-                  >
-                    Next
-                  </button>
-                ) : (
-                  <button
-                    onClick={handleSubmit}
-                    disabled={Object.keys(userAnswers).length !== allQuestions.length}
-                    className={`px-4 py-2 rounded ${
-                      Object.keys(userAnswers).length !== allQuestions.length
-                        ? 'p-4  border border-opacity-20 border-whitecursor-not-allowed'
-                        : 'bg-green-600 text-white hover:bg-green-700'
-                    }`}
-                  >
-                    Submit Assignment
-                  </button>
-                )}
               </div>
             </div>
+          )}
+
+          {/* Navigation buttons */}
+          <div className="flex justify-between mt-4">
+            <button
+              onClick={handlePrevQuestion}
+              disabled={currentQuestionIndex === 0}
+              className={`px-3 py-1.5 rounded text-sm ${
+                currentQuestionIndex === 0 
+                  ? 'bg-gray-300  cursor-not-allowed' 
+                  : 'bg-gray-600  text-white hover:bg-gray-700'
+              }`}
+            >
+              Previous
+            </button>
+            
+            {currentQuestionIndex < allQuestions.length - 1 ? (
+              <button
+                onClick={handleNextQuestion}
+                disabled={userAnswers[allQuestions[currentQuestionIndex].id] === undefined}
+                className={`px-3 py-1.5 rounded text-sm ${
+                  userAnswers[allQuestions[currentQuestionIndex].id] === undefined
+                    ? 'bg-gray-300 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                onClick={handleSubmit}
+                disabled={Object.keys(userAnswers).length !== allQuestions.length}
+                className={`px-3 py-1.5 rounded text-sm ${
+                  Object.keys(userAnswers).length !== allQuestions.length
+                    ? 'bg-gray-300 cursor-not-allowed'
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
+              >
+                Submit
+              </button>
+            )}
+          </div>
+
+          {showConfidencePopup && (
+            <ConfidencePopup
+              isOpen={showConfidencePopup}
+              onClose={() => setShowConfidencePopup(false)}
+              onConfidenceSelect={handleConfidenceSelect}
+              questionId={allQuestions[currentQuestionIndex]?.id}
+              currentAnswer={currentAnswerText}
+            />
           )}
         </div>
       )}
 
-      {/* Document Popup */}
       <DocumentPopup
         isOpen={showDocumentPopup}
         onClose={() => setShowDocumentPopup(false)}
         documentPath={currentDocumentPath}
+        audioPath={currentDocumentAudioPath}
       />
     </div>
   )
