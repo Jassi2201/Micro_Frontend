@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react'
 import api from '../../services/api'
 import { useAuth } from '../../services/auth'
-import { FiBook, FiCheckCircle, FiXCircle, FiBarChart2, FiAward, FiClock, FiTrendingUp, FiTrendingDown, FiActivity, FiUsers } from 'react-icons/fi'
+import {  FiBarChart2, FiAward, FiTrendingUp, FiTrendingDown, FiActivity, FiUsers } from 'react-icons/fi'
 import { TypeAnimation } from 'react-type-animation'
+
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -18,6 +20,7 @@ import {
   ArcElement
 } from 'chart.js'
 import { Bar, Radar, Line, Pie, Doughnut } from 'react-chartjs-2'
+import GurgaonGlobe from '../../components/GurgaonGlobe'
 
 // Register ChartJS components
 ChartJS.register(
@@ -296,7 +299,7 @@ const Progress2 = () => {
     )
   }
 
-  return (
+return (
     <div className="text-white p-4 sm:p-6">
       <div className="flex items-center mb-6">
         <h1 className="text-2xl font-head sm:text-3xl font-bold text-white mr-2">My</h1>
@@ -324,11 +327,55 @@ const Progress2 = () => {
           repeat={Infinity}
         />
       </div>
-      
+
       {error && <div className="mb-4 p-2 bg-gradient-to-r from-red-900 to-red-700 border border-opacity-20 border-white rounded-lg shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)]">{error}</div>}
       
+     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+  {/* Left column - Gurgaon Globe */}
+  <div className='h-96'> {/* Increased from h-64 to h-96 */}
+    <h2 className="text-lg font-semibold text-white mb-4">Location Overview</h2>
+    <div className="p-4 rounded-xl border border-opacity-20 border-white shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10 h-full">
+      <GurgaonGlobe />
+    </div>
+  </div>
+          
+          {/* Right column - System Login Details */}
+       <div className='h-96'>
+  <h2 className="text-lg font-semibold text-white mb-4">System Access & Analytics</h2>
+  <div className="p-6 rounded-xl border border-opacity-20 border-white shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10 h-full">
+    {/* Laptop Image with Overlay */}
+    <div className="flex items-center justify-center mb-6">
+      <div className="relative">
+        {/* Laptop image from assets folder */}
+        <img 
+          src="https://png.pngtree.com/png-vector/20240628/ourmid/pngtree-laptop-with-blank-screen-and-png-image_12732543.png"
+          alt="System Device" 
+          className="w-96 h-auto"
+        />
+        {/* Overlay with system information */}
+        <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-48 h-32  p-3">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-green-400 font-semibold">● Online</span>
+            <span className="text-xs text-white">Dell Latitude 5420</span>
+          </div>
+          <div className="bg-blue-900 bg-opacity-30 p-2 rounded mb-2">
+            <p className="text-xs text-white">Last login: Today, 09:42 AM</p>
+          </div>
+          <div className="flex justify-between text-xs text-white">
+            <span>IP: 192.168.1.45</span>
+            <span>VPN: Connected</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    {/* Additional analytics content can go here */}
+  </div>
+</div>
+        </div>  
+
       {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-20">
         <ProgressCard 
           title="Overall Score" 
           value="65.33%" 
@@ -357,6 +404,8 @@ const Progress2 = () => {
           color="red" 
         />
       </div>
+      
+  
       
       {/* Section 1 */}
       <div className="mb-8">

@@ -603,17 +603,16 @@ return (
             
             {currentQuestionIndex < allQuestions.length - 1 ? (
               <button
-                    onClick={handleNextQuestion}
-                    disabled={userAnswers[allQuestions[currentQuestionIndex].id] === undefined}
-                    className={`px-4 py-2 rounded ${
-                      userAnswers[allQuestions[currentQuestionIndex].id] === undefined
-                        ? 'p-4  border border-opacity-20 border-white cursor-not-allowed'
-                        : 'bg-[#3b82f6] text-white '
-                    }`}
-                  >
-                    Next
-                  </button>
-
+                onClick={handleNextQuestion}
+                disabled={userAnswers[allQuestions[currentQuestionIndex].id] === undefined}
+                className={`px-3 py-1.5 rounded text-sm ${
+                  userAnswers[allQuestions[currentQuestionIndex].id] === undefined
+                    ? 'bg-gray-300 cursor-not-allowed'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                }`}
+              >
+                Next
+              </button>
             ) : (
               <button
                 onClick={handleSubmit}
