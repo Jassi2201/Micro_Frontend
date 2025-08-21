@@ -4,7 +4,7 @@ import { useAuth } from '../../services/auth'
 import { FiBook, FiCheckCircle, FiXCircle, FiBarChart2, FiAward, FiClock } from 'react-icons/fi'
 import { TypeAnimation } from 'react-type-animation'
 
-const Progress = () => {
+const Progress2 = () => {
   const { user } = useAuth()
   const [progress, setProgress] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -247,6 +247,6 @@ const Progress = () => {
   )
 }
 
-export default Progress
+export default Progress2
 
 
