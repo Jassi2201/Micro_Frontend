@@ -3,8 +3,13 @@ import api from '../../services/api'
 import { useAuth } from '../../services/auth'
 import ConfidencePopup from '../../components/ConfidencePopup'
 import DocumentPopup from '../../components/DocumentPopup'
+import {FaCheck,FaTimes} from 'react-icons/fa'
+import "./Assignment.css"
+import { FiDownload, FiAlertCircle } from 'react-icons/fi';
 import AudioButton from '../../components/AudioButton'
 import { FILE_BASE_URL } from '../../services/api'; // Import the base URL from api.js
+
+
 
 const Assignments = () => {
   const { user } = useAuth()
@@ -483,7 +488,7 @@ return (
         return (
           <span 
             key={category.category_id} 
-            className="text-lg font-head text-black "
+            className="text-lg font-head text-white "
           >
            Category: {category.category_name}
           </span>
@@ -582,30 +587,33 @@ return (
 
           {/* Navigation buttons */}
           <div className="flex justify-between mt-4">
-            <button
-              onClick={handlePrevQuestion}
-              disabled={currentQuestionIndex === 0}
-              className={`px-3 py-1.5 rounded text-sm ${
-                currentQuestionIndex === 0 
-                  ? 'bg-gray-300  cursor-not-allowed' 
-                  : 'bg-gray-600  text-white hover:bg-gray-700'
-              }`}
-            >
-              Previous
-            </button>
+             <button
+                  onClick={handlePrevQuestion}
+                  disabled={currentQuestionIndex === 0}
+                  className={`px-4 py-2 rounded ${
+                    currentQuestionIndex === 0 
+                      ? '  border border-opacity-20 border-white cursor-not-allowed' 
+                      : 'bg-[#3b82f6] text-white '
+                  }`}
+                >
+                  Previous
+                </button>
+                
+
             
             {currentQuestionIndex < allQuestions.length - 1 ? (
               <button
-                onClick={handleNextQuestion}
-                disabled={userAnswers[allQuestions[currentQuestionIndex].id] === undefined}
-                className={`px-3 py-1.5 rounded text-sm ${
-                  userAnswers[allQuestions[currentQuestionIndex].id] === undefined
-                    ? 'bg-gray-300 cursor-not-allowed'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
-                }`}
-              >
-                Next
-              </button>
+                    onClick={handleNextQuestion}
+                    disabled={userAnswers[allQuestions[currentQuestionIndex].id] === undefined}
+                    className={`px-4 py-2 rounded ${
+                      userAnswers[allQuestions[currentQuestionIndex].id] === undefined
+                        ? 'p-4  border border-opacity-20 border-white cursor-not-allowed'
+                        : 'bg-[#3b82f6] text-white '
+                    }`}
+                  >
+                    Next
+                  </button>
+
             ) : (
               <button
                 onClick={handleSubmit}
