@@ -64,9 +64,7 @@ const GurgaonGlobe = () => {
         ref={globeEl}
         globeImageUrl="//cdn.jsdelivr.net/npm/three-globe/example/img/earth-blue-marble.jpg"
         backgroundColor="rgba(0,0,0,0)"
-        pointsData={[gurgaonCoords]}
-        pointRadius="size"
-        pointColor={() => 'orange'}
+     
         pointResolution={10}
         width={dimensions.width}
         height={dimensions.height}

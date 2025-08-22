@@ -265,7 +265,7 @@ return (
                  <div key={assignment.id} className="rounded-xl border border-opacity-20 border-white p-6 shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10">
 
                   <h3 className="text-lg font-semibold mb-2">{assignment.name}</h3>
-                  <p className="text-gray-600 mb-4">Created: {new Date(assignment.createdAt).toLocaleDateString()}</p>
+                  <p className="text-white mb-4">Created: {new Date(assignment.createdAt).toLocaleDateString()}</p>
                   <button 
                     onClick={() => startAssignment(assignment.id)}
                     className="bg-blue-600 text-white  px-4 py-2 rounded hover:bg-blue-700"
@@ -286,7 +286,7 @@ return (
                  <div key={assignment.id} className="rounded-xl border border-opacity-20 border-white p-6 shadow-[0_4px_6px_-1px_rgba(255,255,255,0.1),0_2px_4px_-1px_rgba(0,0,0,0.5)] backdrop-blur-sm bg-white/10">
 
                   <h3 className="text-lg font-semibold mb-2">{assignment.name}</h3>
-                  <p className="text-gray-600 mb-2">Completed: {new Date(assignment.completedAt).toLocaleDateString()}</p>
+                  <p className="text-white mb-2">Completed: {new Date(assignment.completedAt).toLocaleDateString()}</p>
                   <div className="mb-4">
                     <p className="text-sm">Mastery: {assignment.stats.masteryPercentage}%</p>
                     <p className="text-sm">{assignment.stats.masteredQuestions}/{assignment.stats.totalQuestions} questions mastered</p>
@@ -552,18 +552,31 @@ return (
                 </h3>
                 
                 {allQuestions[currentQuestionIndex].long_content_file_path && (
-                  <button
-                    onClick={() => handleViewDocument(
-                      allQuestions[currentQuestionIndex].long_content_file_path,
-                      allQuestions[currentQuestionIndex].long_content_audio_path
-                    )}
-                    className="mb-3 flex items-center px-2.5 py-1 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded border border-blue-200 text-xs"
-                  >
-                    <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z" clipRule="evenodd" />
-                    </svg>
-                    View Document
-                  </button>
+                 <button
+  onClick={() =>
+    handleViewDocument(
+      allQuestions[currentQuestionIndex].long_content_file_path,
+      allQuestions[currentQuestionIndex].long_content_audio_path
+    )
+  }
+  className="mb-3 flex items-center px-4 py-2 text-sm font-medium text-blue-400 
+             hover:bg-blue-900 rounded-lg border border-blue-500 
+             transition focus:outline-none hover:text-white focus:ring-2 focus:ring-blue-500"
+>
+  <svg
+    className="w-5 h-5 text-blue-400 mr-2"
+    fill="currentColor"
+    viewBox="0 0 20 20"
+  >
+    <path
+      fillRule="evenodd"
+      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2h-1V9z"
+      clipRule="evenodd"
+    />
+  </svg>
+  View Document
+</button>
+
                 )}
                 
              <div className="space-y-2 mb-4">

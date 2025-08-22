@@ -11,7 +11,10 @@ import {
   FiMenu,
   FiX,
   FiChevronRight,
-  FiUser
+  FiUser,
+   FiVideo,        // Added for Tutorial
+  FiShoppingCart,  // Added for FlipCart
+  FiBox
 } from 'react-icons/fi';
 
 const AdminSidebar = () => {
@@ -37,6 +40,8 @@ const AdminSidebar = () => {
     { path: '/admin/categories', name: 'Categories', icon: <FiGrid className="w-5 h-5" /> },
     { path: '/admin/questions', name: 'Questions', icon: <FiHelpCircle className="w-5 h-5" /> },
     { path: '/admin/assignments', name: 'Assessments', icon: <FiBook className="w-5 h-5" /> },
+    { path: '/admin/tutorial', name: 'Tutorial Video', icon: <FiVideo className="w-5 h-5" /> },
+      { path: '/admin/flipkart', name: 'FlipCart', icon: <FiBox className="w-5 h-5" /> },
     { path: '/admin/user-progress', name: 'User Progress', icon: <FiTrendingUp className="w-5 h-5" /> },
   ];
 
