@@ -643,8 +643,7 @@ const Progess = () => {
               drawBorder: false,
             },
             ticks: {
-              color: '#fff',a
-              display: false, 
+              color: '#fff',
               stepSize: 5,
               font: {
                 size: 11
