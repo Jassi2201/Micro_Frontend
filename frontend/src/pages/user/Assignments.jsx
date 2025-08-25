@@ -8,6 +8,7 @@ import "./Assignment.css"
 import { FiDownload, FiAlertCircle } from 'react-icons/fi';
 import AudioButton from '../../components/AudioButton'
 import { FILE_BASE_URL } from '../../services/api'; // Import the base URL from api.js
+import AssignmentIntroVideo from '../../components/AssignmentIntroVideo'
 
 
 
@@ -29,6 +30,8 @@ const Assignments = () => {
   const [showDocumentPopup, setShowDocumentPopup] = useState(false)
   const [currentDocumentPath, setCurrentDocumentPath] = useState('')
   const [currentDocumentAudioPath, setCurrentDocumentAudioPath] = useState('');
+  const [showIntroVideo, setShowIntroVideo] = useState(false);
+const [assignmentToStart, setAssignmentToStart] = useState(null);
 
   const allQuestions = questionsByCategory.reduce((acc, category) => {
     return [...acc, ...category.questions]
@@ -63,12 +66,21 @@ const Assignments = () => {
     }
   }, [user])
 
-  const startAssignment = async (assignmentId) => {
+
+// Modify the startAssignment function
+const startAssignment = async (assignmentId) => {
+  const assignment = [...assignments, ...completedAssignments].find(a => a.id === assignmentId);
+  setAssignmentToStart(assignment);
+  setShowIntroVideo(true);
+};
+
+// Add this handler for when the video ends
+const handleVideoEnd = async () => {
+  if (assignmentToStart) {
     try {
-      setLoading(true)
-      setError('')
-      const data = await api.getAssignmentQuestions(user.id, assignmentId)
-      const assignment = [...assignments, ...completedAssignments].find(a => a.id === assignmentId)
+      setLoading(true);
+      setError('');
+      const data = await api.getAssignmentQuestions(user.id, assignmentToStart.id);
       
       const parsedCategories = data.questions.map(category => ({
         ...category,
@@ -81,28 +93,31 @@ const Assignments = () => {
                 : question.options
             }
           } catch (e) {
-            console.error('Failed to parse options for question:', question.id, e)
+            console.error('Failed to parse options for question:', question.id, e);
             return {
               ...question,
               options: ['Option 1', 'Option 2', 'Option 3', 'Option 4']
-            }
+            };
           }
         })
-      }))
+      }));
       
-      setSelectedAssignment(assignment)
-      setQuestionsByCategory(parsedCategories)
-      setCurrentQuestionIndex(0)
-      setUserAnswers({})
-      setUserConfidence({})
-      setSubmitted(false)
-      setResults(null)
+      setSelectedAssignment(assignmentToStart);
+      setQuestionsByCategory(parsedCategories);
+      setCurrentQuestionIndex(0);
+      setUserAnswers({});
+      setUserConfidence({});
+      setSubmitted(false);
+      setResults(null);
     } catch (err) {
-      setError(err.message || 'Failed to load assignment')
+      setError(err.message || 'Failed to load assignment');
     } finally {
-      setLoading(false)
+      setLoading(false);
+      setShowIntroVideo(false);
+      setAssignmentToStart(null);
     }
   }
+};
 
   const viewResults = async (assignmentId) => {
     try {
@@ -659,6 +674,13 @@ return (
         documentPath={currentDocumentPath}
         audioPath={currentDocumentAudioPath}
       />
+        {/* ADD THE INTRO VIDEO COMPONENT RIGHT HERE */}
+      {showIntroVideo && assignmentToStart && (
+        <AssignmentIntroVideo 
+          onVideoEnd={handleVideoEnd} 
+          assignmentName={assignmentToStart.name} 
+        />
+      )}
     </div>
   )
 }

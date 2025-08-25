@@ -101,7 +101,7 @@ const UserLayout = () => {
             {/* Content */}
             <div className="relative z-10">
                 <UserHeader />
-                <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                <main className="max-w-8xl mx-auto py-6 sm:px-6 lg:px-8">
                     <div className="px-4 py-6 sm:px-0 text-white">
                         <Outlet />
                     </div>
